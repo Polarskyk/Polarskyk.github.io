@@ -1,0 +1,33 @@
+{
+  "name": "kernelsu-playground",
+  "version": "1.0.0",
+  "description": "一个专业的 KernelSU 玩机主题网站",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "build": "echo 'Building for production...'",
+    "deploy": "gh-pages -d ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Polarskyk/Polarskyk.github.io.git"
+  },
+  "keywords": [
+    "kernelsu",
+    "android",
+    "root",
+    "玩机",
+    "github-pages"
+  ],
+  "author": "Polarskyk",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "gh-pages": "^4.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

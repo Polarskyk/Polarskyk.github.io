@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KernelSU 玩机指南 - Polarskyk</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-mobile-alt"></i>
+                <span>KernelSU 玩机</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">首页</a></li>
+                <li><a href="#features" class="nav-link">功能特性</a></li>
+                <li><a href="#installation" class="nav-link">安装指南</a></li>
+                <li><a href="#modules" class="nav-link">模块推荐</a></li>
+                <li><a href="#troubleshooting" class="nav-link">问题解决</a></li>
+                <li><a href="#contact" class="nav-link">联系我们</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主页部分 -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">KernelSU</span> 玩机世界
+                </h1>
+                <p class="hero-subtitle">
+                    探索 Android 内核级 Root 解决方案，释放您设备的无限潜能
+                </p>
+                <div class="hero-buttons">
+                    <a href="#installation" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        开始安装
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i>
+                        了解更多
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="status-bar">
+                            <span class="time">14:25</span>
+                            <div class="status-icons">
+                                <i class="fas fa-signal"></i>
+                                <i class="fas fa-wifi"></i>
+                                <i class="fas fa-battery-three-quarters"></i>
+                            </div>
+                        </div>
+                        <div class="screen-content">
+                            <div class="kernelsu-logo">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>KernelSU</span>
+                            </div>
+                            <div class="status-indicator active">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Root 已激活</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-animation">
+            <div class="floating-icon" style="--delay: 0s;">
+                <i class="fab fa-android"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 1s;">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="floating-icon" style="--delay: 2s;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特性 -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>为什么选择 KernelSU？</h2>
+                <p>现代化的内核级 Root 解决方案，为玩机爱好者提供更安全、更强大的体验</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>内核级安全</h3>
+                    <p>基于内核模块的 Root 实现，提供更高的安全性和稳定性，避免系统分区修改</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>无系统修改</h3>
+                    <p>不修改系统分区，保持 OTA 更新能力，轻松通过各种安全检测</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>性能优化</h3>
+                    <p>内核级权限管理，更低的性能开销，让您的设备运行更加流畅</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3>模块化设计</h3>
+                    <p>支持丰富的模块生态，轻松扩展功能，满足不同玩机需求</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>广泛兼容</h3>
+                    <p>支持多种设备和内核版本，覆盖主流 Android 设备</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>活跃社区</h3>
+                    <p>强大的开发者社区支持，持续更新维护，问题快速解决</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 安装指南 -->
+    <section id="installation" class="installation">
+        <div class="container">
+            <div class="section-header">
+                <h2>安装指南</h2>
+                <p>跟随详细步骤，安全地为您的设备安装 KernelSU</p>
+            </div>
+            <div class="installation-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>准备工作</h3>
+                        <ul>
+                            <li>确保设备已解锁 Bootloader</li>
+                            <li>下载对应设备的 KernelSU 内核</li>
+                            <li>准备 ADB 和 Fastboot 工具</li>
+                            <li>备份重要数据</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>刷入内核</h3>
+                        <div class="code-block">
+                            <code>
+                                fastboot flash boot kernelsu-boot.img<br>
+                                fastboot reboot
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>安装管理器</h3>
+                        <ul>
+                            <li>下载 KernelSU Manager APK</li>
+                            <li>安装管理器应用</li>
+                            <li>验证 Root 权限</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>完成配置</h3>
+                        <ul>
+                            <li>配置应用权限管理</li>
+                            <li>安装必要模块</li>
+                            <li>享受玩机乐趣</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="installation-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>重要提醒</h4>
+                    <p>刷机有风险，操作需谨慎。请确保您对刷机流程有足够了解，并已做好数据备份。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块推荐 -->
+    <section id="modules" class="modules">
+        <div class="container">
+            <div class="section-header">
+                <h2>精选模块推荐</h2>
+                <p>精心挑选的优质模块，提升您的设备使用体验</p>
+            </div>
+            <div class="modules-grid">
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>AdBlock Plus</h3>
+                            <p class="module-author">by developer</p>
+                        </div>
+                    </div>
+                    <p class="module-description">系统级广告拦截，彻底告别各种广告骚扰，提升浏览体验</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 100K+</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                </div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>UI Tweaker</h3>
+                            <p class="module-author">by designer</p>
+                        </div>
+                    </div>
+                    <p class="module-description">界面美化工具，自定义状态栏、导航栏，打造个性化界面</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 75K+</span>
+                        <span><i class="fas fa-star"></i> 4.6</span>
+                    </div>
+                </div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>Performance Boost</h3>
+                            <p class="module-author">by optimizer</p>
+                        </div>
+                    </div>
+                    <p class="module-description">性能优化模块，提升系统响应速度，优化内存管理</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 120K+</span>
+                        <span><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                </div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-battery-full"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>Battery Saver Pro</h3>
+                            <p class="module-author">by powersaver</p>
+                        </div>
+                    </div>
+                    <p class="module-description">深度电池优化，延长续航时间，智能功耗管理</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 90K+</span>
+                        <span><i class="fas fa-star"></i> 4.7</span>
+                    </div>
+                </div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>Camera Enhancement</h3>
+                            <p class="module-author">by photographer</p>
+                        </div>
+                    </div>
+                    <p class="module-description">相机画质增强，解锁隐藏功能，提升拍照体验</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 65K+</span>
+                        <span><i class="fas fa-star"></i> 4.5</span>
+                    </div>
+                </div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="module-info">
+                            <h3>Privacy Guard</h3>
+                            <p class="module-author">by security</p>
+                        </div>
+                    </div>
+                    <p class="module-description">隐私保护工具，权限管理，保护个人数据安全</p>
+                    <div class="module-stats">
+                        <span><i class="fas fa-download"></i> 85K+</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 问题解决 -->
+    <section id="troubleshooting" class="troubleshooting">
+        <div class="container">
+            <div class="section-header">
+                <h2>常见问题解决</h2>
+                <p>遇到问题不要慌，这里有最全面的解决方案</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>安装后无法获取 Root 权限？</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>检查以下几个方面：</p>
+                        <ul>
+                            <li>确认内核版本与设备匹配</li>
+                            <li>检查 SELinux 状态</li>
+                            <li>重新安装 KernelSU Manager</li>
+                            <li>查看内核日志确认模块加载状态</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>设备启动后卡在开机画面？</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>可能的解决方案：</p>
+                        <ul>
+                            <li>进入 Recovery 模式，清除缓存</li>
+                            <li>恢复原版内核</li>
+                            <li>检查内核与系统版本兼容性</li>
+                            <li>使用正确的刷写命令</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>某些应用检测到 Root 权限？</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>隐藏 Root 的方法：</p>
+                        <ul>
+                            <li>使用 KernelSU 的应用权限管理</li>
+                            <li>安装隐藏模块</li>
+                            <li>配置 DenyList</li>
+                            <li>使用系统属性修改工具</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>如何卸载 KernelSU？</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>完全卸载步骤：</p>
+                        <ul>
+                            <li>刷回原版内核</li>
+                            <li>卸载 KernelSU Manager</li>
+                            <li>清除相关数据目录</li>
+                            <li>重启设备验证</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>加入我们的社区</h2>
+                <p>与全球玩机爱好者一起交流经验，分享技巧</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub</h3>
+                    <p>查看源代码，提交问题反馈</p>
+                    <a href="https://github.com/tiann/KernelSU" class="contact-link">访问仓库</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <h3>Telegram</h3>
+                    <p>即时聊天，快速获得帮助</p>
+                    <a href="#" class="contact-link">加入群组</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <h3>Discord</h3>
+                    <p>语音交流，深度讨论</p>
+                    <a href="#" class="contact-link">加入服务器</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>文档</h3>
+                    <p>详细教程，开发指南</p>
+                    <a href="#" class="contact-link">查看文档</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>KernelSU 玩机</span>
+                    </div>
+                    <p>探索 Android 内核的无限可能</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="#features">功能特性</a></li>
+                        <li><a href="#installation">安装指南</a></li>
+                        <li><a href="#modules">模块推荐</a></li>
+                        <li><a href="#troubleshooting">问题解决</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>资源</h4>
+                    <ul>
+                        <li><a href="#">开发文档</a></li>
+                        <li><a href="#">API 参考</a></li>
+                        <li><a href="#">模块开发</a></li>
+                        <li><a href="#">更新日志</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>支持</h4>
+                    <ul>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">社区论坛</a></li>
+                        <li><a href="#">报告问题</a></li>
+                        <li><a href="#">功能请求</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Polarskyk. 本站内容仅供学习交流使用。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="backToTop" class="back-to-top" title="回到顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
