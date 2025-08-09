@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KernelSU 玩机指南 - Polarskyk</title>
+    <title>IPTV API - 高性能直播流媒体解决方案</title>
+    <meta name="description" content="专业的IPTV API服务，提供高质量直播流媒体解决方案，支持多种格式和协议">
+    <meta name="keywords" content="IPTV,API,直播,流媒体,M3U8,HLS,视频流">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <i class="fas fa-mobile-alt"></i>
-                <span>KernelSU 玩机</span>
+                <a href="#home">
+                    <i class="fas fa-tv"></i>
+                    <span>IPTV API</span>
+                </a>
             </div>
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link">首页</a></li>
                 <li><a href="#features" class="nav-link">功能特性</a></li>
-                <li><a href="#installation" class="nav-link">安装指南</a></li>
-                <li><a href="#modules" class="nav-link">模块推荐</a></li>
-                <li><a href="#troubleshooting" class="nav-link">问题解决</a></li>
-                <li><a href="#contact" class="nav-link">联系我们</a></li>
+                <li><a href="#api" class="nav-link">API文档</a></li>
+                <li><a href="#channels" class="nav-link">频道列表</a></li>
+                <li><a href="#pricing" class="nav-link">价格方案</a></li>
+                <li><a href="#demo" class="nav-link">在线演示</a></li>
             </ul>
+            <div class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </div>
             <div class="hamburger">
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -36,57 +46,60 @@
     <section id="home" class="hero">
         <div class="hero-container">
             <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-rocket"></i>
+                    <span>专业级流媒体解决方案</span>
+                </div>
                 <h1 class="hero-title">
-                    <span class="gradient-text">KernelSU</span> 玩机世界
+                    高性能 <span class="gradient-text">IPTV API</span>
                 </h1>
-                <p class="hero-subtitle">
-                    探索 Android 内核级 Root 解决方案，释放您设备的无限潜能
+                <p class="hero-description">
+                    提供稳定、高清的直播流媒体服务，支持全球数千个频道，
+                    兼容多种播放器和设备，让您轻松构建自己的IPTV应用。
                 </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="5000">0</div>
+                        <div class="stat-label">频道数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="99.9">0</div>
+                        <div class="stat-label">在线率(%)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="4">0</div>
+                        <div class="stat-label">K超清画质</div>
+                    </div>
+                </div>
                 <div class="hero-buttons">
-                    <a href="#installation" class="btn btn-primary">
-                        <i class="fas fa-download"></i>
-                        开始安装
+                    <a href="#api" class="btn btn-primary">
+                        <i class="fas fa-code"></i>
+                        查看API文档
                     </a>
-                    <a href="#features" class="btn btn-secondary">
-                        <i class="fas fa-info-circle"></i>
-                        了解更多
+                    <a href="#demo" class="btn btn-secondary">
+                        <i class="fas fa-play"></i>
+                        在线演示
                     </a>
                 </div>
             </div>
-            <div class="hero-image">
-                <div class="phone-mockup">
-                    <div class="phone-screen">
-                        <div class="status-bar">
-                            <span class="time">14:25</span>
-                            <div class="status-icons">
-                                <i class="fas fa-signal"></i>
-                                <i class="fas fa-wifi"></i>
-                                <i class="fas fa-battery-three-quarters"></i>
-                            </div>
-                        </div>
-                        <div class="screen-content">
-                            <div class="kernelsu-logo">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>KernelSU</span>
-                            </div>
-                            <div class="status-indicator active">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Root 已激活</span>
+            <div class="hero-visual">
+                <div class="tv-mockup">
+                    <div class="tv-screen">
+                        <div class="video-player">
+                            <div class="player-controls">
+                                <div class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress"></div>
+                                </div>
+                                <div class="volume-control">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="hero-animation">
-            <div class="floating-icon" style="--delay: 0s;">
-                <i class="fab fa-android"></i>
-            </div>
-            <div class="floating-icon" style="--delay: 1s;">
-                <i class="fas fa-code"></i>
-            </div>
-            <div class="floating-icon" style="--delay: 2s;">
-                <i class="fas fa-shield-alt"></i>
             </div>
         </div>
     </section>
@@ -95,340 +108,819 @@
     <section id="features" class="features">
         <div class="container">
             <div class="section-header">
-                <h2>为什么选择 KernelSU？</h2>
-                <p>现代化的内核级 Root 解决方案，为玩机爱好者提供更安全、更强大的体验</p>
+                <h2>强大功能特性</h2>
+                <p>为开发者和企业提供完整的IPTV解决方案</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
+                        <i class="fas fa-lightning-bolt"></i>
+                    </div>
+                    <h3>高速稳定</h3>
+                    <p>采用CDN加速，全球节点部署，确保流畅播放体验，延迟低于100ms</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3>内核级安全</h3>
-                    <p>基于内核模块的 Root 实现，提供更高的安全性和稳定性，避免系统分区修改</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <h3>无系统修改</h3>
-                    <p>不修改系统分区，保持 OTA 更新能力，轻松通过各种安全检测</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>性能优化</h3>
-                    <p>内核级权限管理，更低的性能开销，让您的设备运行更加流畅</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-puzzle-piece"></i>
-                    </div>
-                    <h3>模块化设计</h3>
-                    <p>支持丰富的模块生态，轻松扩展功能，满足不同玩机需求</p>
+                    <h3>安全可靠</h3>
+                    <p>多重安全防护，API密钥认证，防盗链保护，保障您的内容安全</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
-                    <h3>广泛兼容</h3>
-                    <p>支持多种设备和内核版本，覆盖主流 Android 设备</p>
+                    <h3>跨平台支持</h3>
+                    <p>支持Android、iOS、Web、Smart TV等多平台，兼容主流播放器</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-cogs"></i>
                     </div>
-                    <h3>活跃社区</h3>
-                    <p>强大的开发者社区支持，持续更新维护，问题快速解决</p>
+                    <h3>易于集成</h3>
+                    <p>RESTful API设计，详细文档说明，快速集成到您的应用中</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>实时监控</h3>
+                    <p>提供详细的播放统计和监控面板，实时掌握服务状态</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7技术支持</h3>
+                    <p>专业技术团队全天候支持，快速响应您的技术问题</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 安装指南 -->
-    <section id="installation" class="installation">
+    <!-- API文档 -->
+    <section id="api" class="api-section">
         <div class="container">
             <div class="section-header">
-                <h2>安装指南</h2>
-                <p>跟随详细步骤，安全地为您的设备安装 KernelSU</p>
+                <h2>API 文档</h2>
+                <p>简单易用的RESTful API，快速开始您的IPTV项目</p>
             </div>
-            <div class="installation-steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>准备工作</h3>
-                        <ul>
-                            <li>确保设备已解锁 Bootloader</li>
-                            <li>下载对应设备的 KernelSU 内核</li>
-                            <li>准备 ADB 和 Fastboot 工具</li>
-                            <li>备份重要数据</li>
-                        </ul>
-                    </div>
+            <div class="api-content">
+                <div class="api-tabs">
+                    <button class="tab-button active" data-tab="m3u8">M3U8播放列表</button>
+                    <button class="tab-button" data-tab="channels">频道信息</button>
+                    <button class="tab-button" data-tab="epg">节目指南</button>
+                    <button class="tab-button" data-tab="auth">认证鉴权</button>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>刷入内核</h3>
+                
+                <div class="tab-content active" id="m3u8">
+                    <div class="api-example">
+                        <h3>获取M3U8播放列表</h3>
                         <div class="code-block">
-                            <code>
-                                fastboot flash boot kernelsu-boot.img<br>
-                                fastboot reboot
-                            </code>
+                            <div class="code-header">
+                                <span>GET</span>
+                                <code>/api/v1/playlist</code>
+                            </div>
+                            <pre><code class="language-bash">curl -X GET "https://api.iptv-service.com/v1/playlist" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+                        </div>
+                        <div class="response-example">
+                            <h4>响应示例</h4>
+                            <pre><code class="language-json">{
+  "status": "success",
+  "data": {
+    "playlist_url": "https://cdn.iptv-service.com/playlist.m3u8",
+    "total_channels": 5000,
+    "last_updated": "2024-08-10T12:00:00Z"
+  }
+}</code></pre>
                         </div>
                     </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>安装管理器</h3>
-                        <ul>
-                            <li>下载 KernelSU Manager APK</li>
-                            <li>安装管理器应用</li>
-                            <li>验证 Root 权限</li>
-                        </ul>
+
+                <div class="tab-content" id="channels">
+                    <div class="api-example">
+                        <h3>获取频道列表</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>GET</span>
+                                <code>/api/v1/channels</code>
+                            </div>
+                            <pre><code class="language-bash">curl -X GET "https://api.iptv-service.com/v1/channels?category=sports&limit=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                        </div>
                     </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>完成配置</h3>
-                        <ul>
-                            <li>配置应用权限管理</li>
-                            <li>安装必要模块</li>
-                            <li>享受玩机乐趣</li>
-                        </ul>
+
+                <div class="tab-content" id="epg">
+                    <div class="api-example">
+                        <h3>获取节目指南</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>GET</span>
+                                <code>/api/v1/epg/{channel_id}</code>
+                            </div>
+                            <pre><code class="language-bash">curl -X GET "https://api.iptv-service.com/v1/epg/cctv1" \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="installation-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <div>
-                    <h4>重要提醒</h4>
-                    <p>刷机有风险，操作需谨慎。请确保您对刷机流程有足够了解，并已做好数据备份。</p>
+
+                <div class="tab-content" id="auth">
+                    <div class="api-example">
+                        <h3>API认证</h3>
+                        <p>所有API请求都需要在请求头中包含有效的API密钥：</p>
+                        <div class="code-block">
+                            <pre><code class="language-bash">Authorization: Bearer YOUR_API_KEY</code></pre>
+                        </div>
+                        <div class="auth-info">
+                            <h4>获取API密钥</h4>
+                            <p>1. 注册开发者账号</p>
+                            <p>2. 创建应用并获取API密钥</p>
+                            <p>3. 在请求头中添加认证信息</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop" alt="生活感悟" />
+                        <div class="blog-category">生活</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <i class="fas fa-calendar"></i>
+                                2024年7月10日
+                            </span>
+                            <span class="blog-read-time">
+                                <i class="fas fa-clock"></i>
+                                3分钟阅读
+                            </span>
+                        </div>
+                        <h3>程序员的工作生活平衡之道</h3>
+                        <p>在快节奏的技术世界中，如何保持工作与生活的平衡，维护身心健康的经验分享。</p>
+                        <div class="blog-tags">
+                            <span class="tag">生活</span>
+                            <span class="tag">思考</span>
+                        </div>
+                        <a href="#" class="blog-link">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=250&fit=crop" alt="学习笔记" />
+                        <div class="blog-category">学习</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <i class="fas fa-calendar"></i>
+                                2024年7月5日
+                            </span>
+                            <span class="blog-read-time">
+                                <i class="fas fa-clock"></i>
+                                7分钟阅读
+                            </span>
+                        </div>
+                        <h3>深入理解JavaScript异步编程</h3>
+                        <p>从回调函数到Promise，再到async/await，全面解析JavaScript异步编程的演进和最佳实践。</p>
+                        <div class="blog-tags">
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">异步编程</span>
+                        </div>
+                        <a href="#" class="blog-link">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="blog-actions">
+                <a href="#" class="btn btn-primary">查看更多频道</a>
+                <a href="#api" class="btn btn-secondary">API 文档</a>
+            </div>
+        </div>
+    </section>
 
-    <!-- 模块推荐 -->
-    <section id="modules" class="modules">
+    <!-- 频道展示 -->
+    <section id="channels" class="channels">
         <div class="container">
             <div class="section-header">
-                <h2>精选模块推荐</h2>
-                <p>精心挑选的优质模块，提升您的设备使用体验</p>
+                <h2>丰富频道资源</h2>
+                <p>涵盖全球优质频道，满足不同观看需求</p>
             </div>
-            <div class="modules-grid">
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-ad"></i>
-                        </div>
-                        <div class="module-info">
-                            <h3>AdBlock Plus</h3>
-                            <p class="module-author">by developer</p>
-                        </div>
-                    </div>
-                    <p class="module-description">系统级广告拦截，彻底告别各种广告骚扰，提升浏览体验</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 100K+</span>
-                        <span><i class="fas fa-star"></i> 4.8</span>
-                    </div>
+            <div class="channel-categories">
+                <div class="category-filter">
+                    <button class="filter-btn active" data-category="all">全部</button>
+                    <button class="filter-btn" data-category="news">新闻</button>
+                    <button class="filter-btn" data-category="sports">体育</button>
+                    <button class="filter-btn" data-category="entertainment">娱乐</button>
+                    <button class="filter-btn" data-category="movie">电影</button>
+                    <button class="filter-btn" data-category="international">国际</button>
                 </div>
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-palette"></i>
+                <div class="channels-grid">
+                    <div class="channel-card" data-category="news">
+                        <div class="channel-logo">
+                            <i class="fas fa-tv"></i>
                         </div>
-                        <div class="module-info">
-                            <h3>UI Tweaker</h3>
-                            <p class="module-author">by designer</p>
-                        </div>
-                    </div>
-                    <p class="module-description">界面美化工具，自定义状态栏、导航栏，打造个性化界面</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 75K+</span>
-                        <span><i class="fas fa-star"></i> 4.6</span>
-                    </div>
-                </div>
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-tachometer-alt"></i>
-                        </div>
-                        <div class="module-info">
-                            <h3>Performance Boost</h3>
-                            <p class="module-author">by optimizer</p>
+                        <h3>CCTV-1</h3>
+                        <p>中央电视台综合频道</p>
+                        <div class="channel-info">
+                            <span class="quality">4K</span>
+                            <span class="status online">在线</span>
                         </div>
                     </div>
-                    <p class="module-description">性能优化模块，提升系统响应速度，优化内存管理</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 120K+</span>
-                        <span><i class="fas fa-star"></i> 4.9</span>
-                    </div>
-                </div>
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-battery-full"></i>
+                    <div class="channel-card" data-category="sports">
+                        <div class="channel-logo">
+                            <i class="fas fa-futbol"></i>
                         </div>
-                        <div class="module-info">
-                            <h3>Battery Saver Pro</h3>
-                            <p class="module-author">by powersaver</p>
+                        <h3>ESPN</h3>
+                        <p>体育娱乐节目电视网</p>
+                        <div class="channel-info">
+                            <span class="quality">HD</span>
+                            <span class="status online">在线</span>
                         </div>
                     </div>
-                    <p class="module-description">深度电池优化，延长续航时间，智能功耗管理</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 90K+</span>
-                        <span><i class="fas fa-star"></i> 4.7</span>
-                    </div>
-                </div>
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-camera"></i>
+                    <div class="channel-card" data-category="entertainment">
+                        <div class="channel-logo">
+                            <i class="fas fa-music"></i>
                         </div>
-                        <div class="module-info">
-                            <h3>Camera Enhancement</h3>
-                            <p class="module-author">by photographer</p>
+                        <h3>湖南卫视</h3>
+                        <p>湖南广播电视台</p>
+                        <div class="channel-info">
+                            <span class="quality">HD</span>
+                            <span class="status online">在线</span>
                         </div>
                     </div>
-                    <p class="module-description">相机画质增强，解锁隐藏功能，提升拍照体验</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 65K+</span>
-                        <span><i class="fas fa-star"></i> 4.5</span>
-                    </div>
-                </div>
-                <div class="module-card">
-                    <div class="module-header">
-                        <div class="module-icon">
-                            <i class="fas fa-shield-alt"></i>
+                    <div class="channel-card" data-category="movie">
+                        <div class="channel-logo">
+                            <i class="fas fa-film"></i>
                         </div>
-                        <div class="module-info">
-                            <h3>Privacy Guard</h3>
-                            <p class="module-author">by security</p>
+                        <h3>HBO</h3>
+                        <p>家庭票房电影频道</p>
+                        <div class="channel-info">
+                            <span class="quality">4K</span>
+                            <span class="status online">在线</span>
                         </div>
                     </div>
-                    <p class="module-description">隐私保护工具，权限管理，保护个人数据安全</p>
-                    <div class="module-stats">
-                        <span><i class="fas fa-download"></i> 85K+</span>
-                        <span><i class="fas fa-star"></i> 4.8</span>
+                    <div class="channel-card" data-category="international">
+                        <div class="channel-logo">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>BBC One</h3>
+                        <p>英国广播公司第一台</p>
+                        <div class="channel-info">
+                            <span class="quality">HD</span>
+                            <span class="status online">在线</span>
+                        </div>
+                    </div>
+                    <div class="channel-card" data-category="news">
+                        <div class="channel-logo">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3>CNN</h3>
+                        <p>美国有线电视新闻网</p>
+                        <div class="channel-info">
+                            <span class="quality">HD</span>
+                            <span class="status online">在线</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>数据可视化平台</h3>
+                            <div class="project-status">
+                                <span class="status-dot active"></span>
+                                <span>进行中</span>
+                            </div>
+                        </div>
+                        <p>一个基于 React 和 D3.js 的交互式数据可视化平台，支持多种图表类型和实时数据更新。具有拖拽式界面设计和丰富的自定义选项。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">D3.js</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Node.js</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 128</span>
+                            <span><i class="fas fa-code-branch"></i> 32</span>
+                            <span><i class="fas fa-eye"></i> 1.2k</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop" alt="移动端天气应用" />
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>天气预报应用</h3>
+                            <div class="project-status">
+                                <span class="status-dot completed"></span>
+                                <span>已完成</span>
+                            </div>
+                        </div>
+                        <p>使用 Flutter 开发的跨平台天气应用，提供详细的天气信息、7天预报和美观的动画效果。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Flutter</span>
+                            <span class="tech-tag">Dart</span>
+                            <span class="tech-tag">API集成</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 86</span>
+                            <span><i class="fas fa-download"></i> 500+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop" alt="博客管理系统" />
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>个人博客系统</h3>
+                            <div class="project-status">
+                                <span class="status-dot completed"></span>
+                                <span>已完成</span>
+                            </div>
+                        </div>
+                        <p>基于 Next.js 的全栈博客系统，支持 Markdown 写作、评论系统和 SEO 优化。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Next.js</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Tailwind CSS</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 64</span>
+                            <span><i class="fas fa-code-branch"></i> 15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop" alt="AI聊天机器人" />
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>AI 聊天助手</h3>
+                            <div class="project-status">
+                                <span class="status-dot planning"></span>
+                                <span>规划中</span>
+                            </div>
+                        </div>
+                        <p>集成多种AI模型的智能聊天助手，支持自然语言处理和上下文记忆功能。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">AI/ML</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 42</span>
+                            <span><i class="fas fa-users"></i> 15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop" alt="任务管理工具" />
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>团队协作工具</h3>
+                            <div class="project-status">
+                                <span class="status-dot completed"></span>
+                                <span>已完成</span>
+                            </div>
+                        </div>
+                        <p>现代化的项目管理和团队协作平台，支持看板、甘特图和实时协作功能。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Vue.js</span>
+                            <span class="tech-tag">Express.js</span>
+                            <span class="tech-tag">Socket.io</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 95</span>
+                            <span><i class="fas fa-users"></i> 28</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop" alt="开源组件库" />
+                        <div class="project-overlay">
+                            <div class="project-links">
+                                <a href="#" title="预览项目" rel="noopener" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="#" title="GitHub仓库" rel="noopener" target="_blank">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>React 组件库</h3>
+                            <div class="project-status">
+                                <span class="status-dot active"></span>
+                                <span>维护中</span>
+                            </div>
+                        </div>
+                        <p>高质量的React组件库，提供丰富的UI组件和工具函数，支持TypeScript和主题定制。</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Storybook</span>
+                        </div>
+                        <div class="project-stats">
+                            <span><i class="fas fa-star"></i> 156</span>
+                            <span class="tech-tag">NPM</span>
+                            <span><i class="fas fa-download"></i> 2.3k</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="projects-actions">
+                <a href="https://github.com/Polarskyk" class="btn btn-primary" rel="noopener" target="_blank">
+                    <i class="fab fa-github"></i>
+                    查看更多项目
+                </a>
+            </div>
+        </div>
+    </section>
 
-    <!-- 问题解决 -->
-    <section id="troubleshooting" class="troubleshooting">
+    <!-- 技能展示 -->
+    <section id="skills" class="skills">
         <div class="container">
             <div class="section-header">
-                <h2>常见问题解决</h2>
-                <p>遇到问题不要慌，这里有最全面的解决方案</p>
+                <h2>技术技能</h2>
+                <p>我的技术栈和专业技能概览</p>
             </div>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>安装后无法获取 Root 权限？</h3>
-                        <i class="fas fa-chevron-down"></i>
+            <div class="skills-content">
+                <div class="skills-categories">
+                    <div class="skill-category">
+                        <div class="category-header">
+                            <div class="category-icon">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <h3>前端开发</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">JavaScript/TypeScript</span>
+                                    <span class="skill-level">专家</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="95"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">React/Next.js</span>
+                                    <span class="skill-level">高级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="90"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Vue.js/Nuxt.js</span>
+                                    <span class="skill-level">高级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="85"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">CSS/Sass/Tailwind</span>
+                                    <span class="skill-level">专家</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="92"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="faq-answer">
-                        <p>检查以下几个方面：</p>
-                        <ul>
-                            <li>确认内核版本与设备匹配</li>
-                            <li>检查 SELinux 状态</li>
-                            <li>重新安装 KernelSU Manager</li>
-                            <li>查看内核日志确认模块加载状态</li>
-                        </ul>
+                    
+                    <div class="skill-category">
+                        <div class="category-header">
+                            <div class="category-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <h3>后端开发</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Node.js/Express</span>
+                                    <span class="skill-level">高级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="88"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Python/Django</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="75"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">数据库 (MongoDB/PostgreSQL)</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="80"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">RESTful API/GraphQL</span>
+                                    <span class="skill-level">高级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="85"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <div class="category-header">
+                            <div class="category-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3>移动开发</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Flutter/Dart</span>
+                                    <span class="skill-level">高级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="82"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">React Native</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="70"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">原生开发基础</span>
+                                    <span class="skill-level">初级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="60"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <div class="category-header">
+                            <div class="category-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3>工具与其他</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Git/GitHub</span>
+                                    <span class="skill-level">专家</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="95"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Docker/CI-CD</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="75"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">AWS/云服务</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="70"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">UI/UX 设计</span>
+                                    <span class="skill-level">中级</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-progress="78"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>设备启动后卡在开机画面？</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>可能的解决方案：</p>
-                        <ul>
-                            <li>进入 Recovery 模式，清除缓存</li>
-                            <li>恢复原版内核</li>
-                            <li>检查内核与系统版本兼容性</li>
-                            <li>使用正确的刷写命令</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>某些应用检测到 Root 权限？</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>隐藏 Root 的方法：</p>
-                        <ul>
-                            <li>使用 KernelSU 的应用权限管理</li>
-                            <li>安装隐藏模块</li>
-                            <li>配置 DenyList</li>
-                            <li>使用系统属性修改工具</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>如何卸载 KernelSU？</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>完全卸载步骤：</p>
-                        <ul>
-                            <li>刷回原版内核</li>
-                            <li>卸载 KernelSU Manager</li>
-                            <li>清除相关数据目录</li>
-                            <li>重启设备验证</li>
-                        </ul>
+                
+                <div class="certifications">
+                    <h3>认证与成就</h3>
+                    <div class="cert-grid">
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i class="fab fa-aws"></i>
+                            </div>
+                            <div class="cert-info">
+                                <h4>AWS 云从业者</h4>
+                                <p>Amazon Web Services</p>
+                                <span class="cert-date">2024</span>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="cert-info">
+                                <h4>Google Analytics 认证</h4>
+                                <p>Google</p>
+                                <span class="cert-date">2023</span>
+                            </div>
+                        </div>
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="cert-info">
+                                <h4>开源贡献者</h4>
+                                <p>GitHub</p>
+                                <span class="cert-date">持续</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 联系我们 -->
+    <!-- 联系我 -->
     <section id="contact" class="contact">
         <div class="container">
             <div class="section-header">
-                <h2>加入我们的社区</h2>
-                <p>与全球玩机爱好者一起交流经验，分享技巧</p>
+                <h2>联系我</h2>
+                <p>有项目合作或技术交流？欢迎随时联系我</p>
             </div>
-            <div class="contact-grid">
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fab fa-github"></i>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-intro">
+                        <h3>让我们一起创造些什么</h3>
+                        <p>我总是乐于讨论新的项目机会、技术挑战或者仅仅是聊聊最新的技术趋势。无论您是想要合作开发项目，还是需要技术咨询，都欢迎联系我。</p>
+                        <p>我通常在24小时内回复邮件，也可以通过社交媒体快速联系我。</p>
                     </div>
-                    <h3>GitHub</h3>
-                    <p>查看源代码，提交问题反馈</p>
-                    <a href="https://github.com/tiann/KernelSU" class="contact-link">访问仓库</a>
+                    <div class="contact-methods">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>邮箱</h4>
+                                <p>contact@polarskyk.com</p>
+                                <a href="mailto:contact@polarskyk.com">发送邮件</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>GitHub</h4>
+                                <p>@Polarskyk</p>
+                                <a href="https://github.com/Polarskyk" rel="noopener" target="_blank">查看代码</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-weibo"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>微博</h4>
+                                <p>@Polarskyk_Dev</p>
+                                <a href="#" rel="noopener" target="_blank">关注我</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-zhihu"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>知乎</h4>
+                                <p>技术分享</p>
+                                <a href="#" rel="noopener" target="_blank">阅读文章</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fab fa-telegram"></i>
-                    </div>
-                    <h3>Telegram</h3>
-                    <p>即时聊天，快速获得帮助</p>
-                    <a href="#" class="contact-link">加入群组</a>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <h3>Discord</h3>
-                    <p>语音交流，深度讨论</p>
-                    <a href="#" class="contact-link">加入服务器</a>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h3>文档</h3>
-                    <p>详细教程，开发指南</p>
-                    <a href="#" class="contact-link">查看文档</a>
+                <div class="contact-form">
+                    <h3>发送消息</h3>
+                    <form class="message-form">
+                        <div class="form-group">
+                            <label for="name">姓名 *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱 *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">主题</label>
+                            <input type="text" id="subject" name="subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">消息内容 *</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            发送消息
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -440,47 +932,60 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>KernelSU 玩机</span>
+                        <i class="fas fa-code"></i>
+                        <span>Polarskyk</span>
                     </div>
-                    <p>探索 Android 内核的无限可能</p>
+                    <p>全栈开发者，热爱技术，专注创新</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-telegram"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="https://github.com/Polarskyk" title="GitHub" rel="noopener" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" title="微博" rel="noopener" target="_blank">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" title="知乎" rel="noopener" target="_blank">
+                            <i class="fab fa-zhihu"></i>
+                        </a>
+                        <a href="mailto:contact@polarskyk.com" title="邮箱">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h4>快速链接</h4>
+                    <h4>快速导航</h4>
                     <ul>
-                        <li><a href="#features">功能特性</a></li>
-                        <li><a href="#installation">安装指南</a></li>
-                        <li><a href="#modules">模块推荐</a></li>
-                        <li><a href="#troubleshooting">问题解决</a></li>
+                        <li><a href="#about">关于我</a></li>
+                        <li><a href="#blog">博客文章</a></li>
+                        <li><a href="#projects">项目展示</a></li>
+                        <li><a href="#skills">技术技能</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>资源</h4>
+                    <h4>技术栈</h4>
                     <ul>
-                        <li><a href="#">开发文档</a></li>
-                        <li><a href="#">API 参考</a></li>
-                        <li><a href="#">模块开发</a></li>
-                        <li><a href="#">更新日志</a></li>
+                        <li><a href="#">React & Vue.js</a></li>
+                        <li><a href="#">Node.js & Python</a></li>
+                        <li><a href="#">Flutter & React Native</a></li>
+                        <li><a href="#">云服务 & DevOps</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>支持</h4>
+                    <h4>最新文章</h4>
                     <ul>
-                        <li><a href="#">常见问题</a></li>
-                        <li><a href="#">社区论坛</a></li>
-                        <li><a href="#">报告问题</a></li>
-                        <li><a href="#">功能请求</a></li>
+                        <li><a href="#">现代前端开发最佳实践</a></li>
+                        <li><a href="#">Flutter vs React Native</a></li>
+                        <li><a href="#">Docker 容器化实战</a></li>
+                        <li><a href="#">开源项目参与指南</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Polarskyk. 本站内容仅供学习交流使用。</p>
+                <p>&copy; 2024 Polarskyk. 用心编码，用爱生活。</p>
+                <div class="footer-links">
+                    <a href="#">隐私政策</a>
+                    <a href="#">使用条款</a>
+                    <a href="#home">回到顶部</a>
+                </div>
             </div>
         </div>
     </footer>
