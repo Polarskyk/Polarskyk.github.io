@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolarSky 个人博客</title>
+    <meta name="description" content="PolarSky的个人技术博客，分享编程技术、开发经验和思考感悟">
+    
+    <!-- 字体和图标 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 样式 -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Markdown 解析和代码高亮 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="#" class="brand-link">
+                    <i class="fas fa-code"></i>
+                    <span>PolarSky</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active" data-section="home">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="#blog" class="nav-link" data-section="blog">
+                    <i class="fas fa-blog"></i>
+                    <span>博客</span>
+                </a>
+                <a href="#about" class="nav-link" data-section="about">
+                    <i class="fas fa-user"></i>
+                    <span>关于</span>
+                </a>
+                <a href="#contact" class="nav-link" data-section="contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>联系</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="search-btn" id="searchBtn" title="搜索">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="mobile-toggle" id="mobileToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="main-content">
+        <!-- 首页 -->
+        <section id="home" class="section hero-section active">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            欢迎来到我的
+                            <span class="gradient-text" id="typingText">技术博客</span>
+                        </h1>
+                        <p class="hero-description">
+                            在这里分享我的编程技术、开发经验和思考感悟。
+                            让我们一起探索技术的无限可能。
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#blog" class="btn btn-primary" data-section="blog">
+                                <i class="fas fa-rocket"></i>
+                                开始阅读
+                            </a>
+                            <a href="#about" class="btn btn-secondary" data-section="about">
+                                <i class="fas fa-user"></i>
+                                了解更多
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="code-window">
+                            <div class="window-header">
+                                <div class="window-buttons">
+                                    <span class="btn-close"></span>
+                                    <span class="btn-minimize"></span>
+                                    <span class="btn-maximize"></span>
+                                </div>
+                                <div class="window-title">welcome.js</div>
+                            </div>
+                            <div class="code-content">
+                                <div class="code-line">
+                                    <span class="line-number">1</span>
+                                    <span class="code-text">
+                                        <span class="keyword">const</span> 
+                                        <span class="variable">blog</span> = 
+                                        <span class="string">'欢迎访问'</span>;
+                                    </span>
+                                </div>
+                                <div class="code-line">
+                                    <span class="line-number">2</span>
+                                    <span class="code-text">
+                                        <span class="function">console.log</span>(<span class="variable">blog</span>);
+                                    </span>
+                                </div>
+                                <div class="code-line">
+                                    <span class="line-number">3</span>
+                                    <span class="code-text">
+                                        <span class="comment">// 开始探索技术世界</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 统计信息 -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="articleCount">0</div>
+                        <div class="stat-label">文章数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="categoryCount">0</div>
+                        <div class="stat-label">分类数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalWords">0</div>
+                        <div class="stat-label">总字数</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 博客区域 -->
+        <section id="blog" class="section blog-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-blog"></i>
+                        博客文章
+                    </h2>
+                    <p class="section-description">记录技术成长路径，分享开发心得体会</p>
+                </div>
+
+                <!-- 博客过滤器 -->
+                <div class="blog-filters">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-category="all">
+                            <i class="fas fa-th"></i>
+                            全部
+                        </button>
+                        <button class="filter-tab" data-category="frontend">
+                            <i class="fab fa-js"></i>
+                            前端开发
+                        </button>
+                        <button class="filter-tab" data-category="backend">
+                            <i class="fas fa-server"></i>
+                            后端开发
+                        </button>
+                        <button class="filter-tab" data-category="tools">
+                            <i class="fas fa-tools"></i>
+                            开发工具
+                        </button>
+                        <button class="filter-tab" data-category="thoughts">
+                            <i class="fas fa-lightbulb"></i>
+                            技术思考
+                        </button>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <div class="sort-dropdown">
+                            <button class="sort-btn" id="sortBtn">
+                                <i class="fas fa-sort"></i>
+                                <span>最新发布</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="sort-menu" id="sortMenu">
+                                <button class="sort-option active" data-sort="date-desc">最新发布</button>
+                                <button class="sort-option" data-sort="date-asc">最早发布</button>
+                                <button class="sort-option" data-sort="title-asc">标题 A-Z</button>
+                                <button class="sort-option" data-sort="title-desc">标题 Z-A</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 博客网格 -->
+                <div class="blog-grid" id="blogGrid">
+                    <div class="loading-state" id="loadingState">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <p>正在加载博客文章...</p>
+                    </div>
+                </div>
+
+                <!-- 分页器 -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="page-btn" id="prevPage" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                        上一页
+                    </button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button class="page-btn" id="nextPage">
+                        下一页
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于区域 -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2 class="section-title">
+                            <i class="fas fa-user"></i>
+                            关于我
+                        </h2>
+                        <div class="about-description">
+                            <p>
+                                我是一名热爱技术的开发者，专注于前端和后端技术的学习与实践。
+                                通过这个博客，我希望记录自己的技术成长历程，同时与大家分享有价值的开发经验。
+                            </p>
+                            <p>
+                                主要技术栈包括 JavaScript、TypeScript、React、Vue、Node.js 等。
+                                始终保持对新技术的好奇心，不断学习和探索。
+                            </p>
+                        </div>
+                        
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <i class="fab fa-js-square"></i>
+                                <span>JavaScript</span>
+                            </div>
+                            <div class="skill-item">
+                                <i class="fab fa-react"></i>
+                                <span>React</span>
+                            </div>
+                            <div class="skill-item">
+                                <i class="fab fa-vue"></i>
+                                <span>Vue.js</span>
+                            </div>
+                            <div class="skill-item">
+                                <i class="fab fa-node-js"></i>
+                                <span>Node.js</span>
+                            </div>
+                            <div class="skill-item">
+                                <i class="fab fa-python"></i>
+                                <span>Python</span>
+                            </div>
+                            <div class="skill-item">
+                                <i class="fab fa-git-alt"></i>
+                                <span>Git</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-visual">
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h3>PolarSky</h3>
+                            <p>全栈开发者</p>
+                            <div class="social-links">
+                                <a href="#" class="social-link" title="GitHub">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="social-link" title="邮箱">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="#" class="social-link" title="微博">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系区域 -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-envelope"></i>
+                        联系我
+                    </h2>
+                    <p class="section-description">有任何问题或建议，欢迎与我交流</p>
+                </div>
+
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>邮箱</h4>
+                                <p>your.email@example.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>GitHub</h4>
+                                <p>github.com/polarsky</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-weibo"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>微博</h4>
+                                <p>@PolarSky</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">姓名</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">主题</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">消息</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            发送消息
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 搜索模态框 -->
+    <div class="modal search-modal" id="searchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>搜索文章</h3>
+                <button class="modal-close" id="closeSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-input-container">
+                <input type="text" id="searchInput" placeholder="输入关键词搜索文章..." autocomplete="off">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="search-placeholder">
+                    <i class="fas fa-search"></i>
+                    <p>输入关键词开始搜索</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章模态框 -->
+    <div class="modal article-modal" id="articleModal">
+        <div class="modal-content article-content">
+            <div class="modal-header">
+                <button class="modal-close" id="closeArticle">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="article-container" id="articleContainer">
+                <!-- 文章内容将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知组件 -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i class="notification-icon"></i>
+            <span class="notification-message"></span>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="blog-manager.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
