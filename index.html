@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KernelSU 玩机指南 - Polarskyk</title>
+    <title>Polarsky's Blog - 技术分享与生活感悟</title>
+    <meta name="description" content="分享前端开发、技术思考和生活感悟的个人博客">
+    <meta name="keywords" content="前端开发,JavaScript,React,Vue,技术博客,个人博客">
+    
+    <!-- 外部资源 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.1/marked.min.js"></script>
+    
+    <!-- 样式文件 -->
     <link rel="stylesheet" href="styles.css">
+<<<<<<< Updated upstream
+=======
+    
+    <!-- 博客管理器 -->
+    <script src="blog-manager.js"></script>
+>>>>>>> Stashed changes
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar">
+    <header class="navbar">
         <div class="nav-container">
+<<<<<<< Updated upstream
             <div class="nav-logo">
                 <a href="#home">
                     <i class="fas fa-tv"></i>
@@ -31,10 +49,41 @@
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
+=======
+            <div class="nav-brand">
+                <a href="#home" class="brand-link">
+                    <i class="fas fa-code"></i>
+                    <span>Polarsky's Blog</span>
+                </a>
+            </div>
+            
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link">首页</a></li>
+                    <li><a href="#blog" class="nav-link">博客</a></li>
+                    <li><a href="#about" class="nav-link">关于</a></li>
+                    <li><a href="#contact" class="nav-link">联系</a></li>
+                </ul>
+            </nav>
+            
+            <div class="nav-actions">
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-toggle" id="mobileToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+>>>>>>> Stashed changes
             </div>
         </div>
-    </nav>
+    </header>
 
+<<<<<<< Updated upstream
     <!-- 主页部分 -->
     <section id="home" class="hero">
         <div class="hero-container">
@@ -89,11 +138,78 @@
                                 <div class="volume-control">
                                     <i class="fas fa-volume-up"></i>
                                 </div>
+=======
+    <!-- 搜索模态框 -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-container">
+            <div class="search-header">
+                <input type="text" class="search-input" placeholder="搜索文章..." id="searchInput">
+                <button class="search-close" id="searchClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="search-hint">输入关键词搜索文章</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <main class="main-content">
+        <!-- 首页英雄区域 -->
+        <section class="hero" id="home">
+            <div class="hero-background">
+                <div class="hero-particles"></div>
+            </div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <span class="greeting">Hello, I'm</span>
+                            <span class="name">Polarsky</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            <span class="typing-text">全栈开发者</span>
+                        </p>
+                        <p class="hero-description">
+                            热爱技术，专注于前端开发、Node.js 后端开发和开源项目。
+                            在这里分享我的技术心得、项目经验和生活感悟。
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#blog" class="btn btn-primary">
+                                <i class="fas fa-book-open"></i>
+                                阅读博客
+                            </a>
+                            <a href="#about" class="btn btn-outline">
+                                <i class="fas fa-user"></i>
+                                了解我
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-avatar">
+                        <div class="avatar-container">
+                            <img src="https://github.com/Polarskyk.png" alt="Polarsky Avatar" class="avatar-img">
+                            <div class="avatar-ring"></div>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" data-count="50">0</div>
+                                <div class="stat-label">文章</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" data-count="1500">0</div>
+                                <div class="stat-label">访问量</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" data-count="15">0</div>
+                                <div class="stat-label">项目</div>
+>>>>>>> Stashed changes
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+<<<<<<< Updated upstream
         </div>
     </section>
 
@@ -146,11 +262,47 @@
                     </div>
                     <h3>24/7技术支持</h3>
                     <p>专业技术团队全天候支持，快速响应您的技术问题</p>
+=======
+        </section>
+
+        <!-- 博客列表区域 -->
+        <section class="blog-section" id="blog">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">最新文章</h2>
+                    <p class="section-subtitle">分享技术心得与生活感悟</p>
+                </div>
+                
+                <!-- 文章过滤器 -->
+                <div class="blog-filters">
+                    <button class="filter-btn active" data-category="all">全部</button>
+                    <button class="filter-btn" data-category="frontend">前端</button>
+                    <button class="filter-btn" data-category="backend">后端</button>
+                    <button class="filter-btn" data-category="tools">工具</button>
+                    <button class="filter-btn" data-category="life">生活</button>
+                </div>
+                
+                <!-- 文章网格 -->
+                <div class="blog-grid" id="blogGrid">
+                    <!-- 文章卡片将通过 JavaScript 动态生成 -->
+                    <div class="blog-loading">
+                        <div class="loading-spinner"></div>
+                        <p>正在加载文章...</p>
+                    </div>
+                </div>
+                
+                <!-- 加载更多按钮 -->
+                <div class="load-more-container">
+                    <button class="btn btn-outline load-more" id="loadMoreBtn">
+                        <i class="fas fa-plus"></i>
+                        加载更多
+                    </button>
+>>>>>>> Stashed changes
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
+<<<<<<< Updated upstream
     <!-- API文档 -->
     <section id="api" class="api-section">
         <div class="container">
@@ -829,10 +981,173 @@
                         </div>
                     </div>
                 </div>
+=======
+        <!-- 关于我区域 -->
+        <section class="about-section" id="about">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2 class="section-title">关于我</h2>
+                        <p class="about-description">
+                            我是一名充满激情的全栈开发者，专注于现代 Web 技术栈。
+                            拥有丰富的前端开发经验，熟练掌握 React、Vue、TypeScript 等技术。
+                            同时在 Node.js 后端开发和云服务部署方面也有深入的实践经验。
+                        </p>
+                        <div class="about-details">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>中国</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>polarsky@example.com</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>从事开发 3+ 年</span>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://github.com/Polarskyk" class="social-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fas fa-rss"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-container">
+                        <h3>技能专长</h3>
+                        <div class="skills-grid">
+                            <div class="skill-category">
+                                <h4>前端开发</h4>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">JavaScript</span>
+                                    <span class="skill-tag">TypeScript</span>
+                                    <span class="skill-tag">React</span>
+                                    <span class="skill-tag">Vue</span>
+                                    <span class="skill-tag">CSS3</span>
+                                    <span class="skill-tag">Sass</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <h4>后端开发</h4>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">Express</span>
+                                    <span class="skill-tag">MongoDB</span>
+                                    <span class="skill-tag">MySQL</span>
+                                    <span class="skill-tag">Redis</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <h4>工具平台</h4>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Git</span>
+                                    <span class="skill-tag">Docker</span>
+                                    <span class="skill-tag">AWS</span>
+                                    <span class="skill-tag">Nginx</span>
+                                    <span class="skill-tag">Linux</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系我区域 -->
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">联系我</h2>
+                    <p class="section-subtitle">有想法或项目合作？欢迎联系我</p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>邮箱</h4>
+                                <p>polarsky@example.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>GitHub</h4>
+                                <p>github.com/Polarskyk</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-rss"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>RSS 订阅</h4>
+                                <p>订阅我的博客更新</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label for="name">姓名</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">主题</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">消息</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            发送消息
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 文章详情模态框 -->
+    <div class="article-modal" id="articleModal">
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <article class="article-content" id="articleContent">
+                    <!-- 文章内容将通过 JavaScript 加载 -->
+                </article>
+>>>>>>> Stashed changes
             </div>
         </div>
-    </section>
+    </div>
 
+<<<<<<< Updated upstream
     <!-- 联系我 -->
     <section id="contact" class="contact">
         <div class="container">
@@ -918,11 +1233,18 @@
             </div>
         </div>
     </section>
+=======
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+>>>>>>> Stashed changes
 
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
+<<<<<<< Updated upstream
                 <div class="footer-section">
                     <div class="footer-logo">
                         <i class="fas fa-code"></i>
@@ -979,15 +1301,22 @@
                     <a href="#">使用条款</a>
                     <a href="#home">回到顶部</a>
                 </div>
+=======
+                <div class="footer-info">
+                    <p>&copy; 2025 Polarsky's Blog. All rights reserved.</p>
+                    <p>Built with ❤️ using vanilla JavaScript</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">隐私政策</a>
+                    <a href="#" class="footer-link">使用条款</a>
+                    <a href="#" class="footer-link">RSS</a>
+                </div>
+>>>>>>> Stashed changes
             </div>
         </div>
     </footer>
 
-    <!-- 回到顶部按钮 -->
-    <button id="backToTop" class="back-to-top" title="回到顶部">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
+    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
