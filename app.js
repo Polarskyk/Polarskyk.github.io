@@ -84,6 +84,7 @@ class BlogApp {
             blogStatusInfo: document.getElementById('blogStatusInfo'),
             blogGrid: document.getElementById('blogGrid'),
             pagination: document.getElementById('pagination'),
+            refreshArticles: document.getElementById('refreshArticles'),
             
             // 文章详情页相关
             articleBreadcrumb: document.getElementById('articleBreadcrumb'),
@@ -193,6 +194,13 @@ class BlogApp {
                 this.setViewMode(btn.dataset.view);
             });
         });
+
+        // 刷新按钮
+        if (this.elements.refreshArticles) {
+            this.elements.refreshArticles.addEventListener('click', () => {
+                this.refreshArticles();
+            });
+        }
     }
 
     // 绑定分类事件
@@ -438,6 +446,48 @@ class BlogApp {
     showPageLoader(show) {
         if (this.elements.pageLoader) {
             this.elements.pageLoader.style.display = show ? 'flex' : 'none';
+        }
+    }
+
+    // 刷新文章列表
+    async refreshArticles() {
+        if (!this.blogManager || this.blogManager.isLoading) return;
+
+        try {
+            // 显示加载状态
+            const refreshBtn = this.elements.refreshArticles;
+            if (refreshBtn) {
+                refreshBtn.classList.add('loading');
+                refreshBtn.querySelector('span').textContent = '刷新中...';
+            }
+
+            console.log('🔄 用户手动刷新文章列表...');
+            
+            // 刷新博客管理器
+            await this.blogManager.refresh();
+            
+            // 重新加载当前页面的内容
+            if (this.currentPage === 'blog-list') {
+                this.loadBlogListPage();
+            } else if (this.currentPage === 'home') {
+                this.loadHomePage();
+            }
+            
+            // 更新统计信息
+            this.updateStats();
+            
+            this.showNotification('文章列表已刷新', 'success');
+            console.log('✅ 文章列表刷新完成');
+        } catch (error) {
+            console.error('❌ 刷新文章列表失败:', error);
+            this.showNotification('刷新失败，请稍后重试', 'error');
+        } finally {
+            // 恢复按钮状态
+            const refreshBtn = this.elements.refreshArticles;
+            if (refreshBtn) {
+                refreshBtn.classList.remove('loading');
+                refreshBtn.querySelector('span').textContent = '刷新';
+            }
         }
     }
 

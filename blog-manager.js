@@ -53,6 +53,12 @@ class BlogManager {
         }
     }
 
+    // 刷新文章列表 - 重新发现和加载所有文章
+    async refresh() {
+        console.log('🔄 刷新文章列表...');
+        return await this.initialize();
+    }
+
     // 加载所有博客文章
     async loadPosts() {
         try {
@@ -103,56 +109,158 @@ class BlogManager {
 
     // 获取 posts 目录下的所有 Markdown 文件
     async getMarkdownFiles() {
-        // 首先尝试已知的文件列表
-        const knownFiles = await this.tryKnownFiles();
+        console.log('🔍 开始动态发现 Markdown 文件...');
         
-        if (knownFiles.length > 0) {
-            console.log(`找到 ${knownFiles.length} 个已知的 Markdown 文件`);
-            return knownFiles;
+        // 尝试多种方式发现文件
+        const discoveredFiles = await this.discoverMarkdownFiles();
+        
+        if (discoveredFiles.length > 0) {
+            console.log(`📁 动态发现 ${discoveredFiles.length} 个 Markdown 文件`);
+            return discoveredFiles;
         }
 
-        // 如果没有找到已知文件，返回空数组
-        console.log('没有找到任何 Markdown 文件');
+        // 如果动态发现失败，尝试常见的文件名模式
+        console.log('🔄 动态发现失败，尝试常见文件名模式...');
+        const commonFiles = await this.tryCommonFileNames();
+        
+        if (commonFiles.length > 0) {
+            console.log(`📂 通过模式匹配找到 ${commonFiles.length} 个文件`);
+            return commonFiles;
+        }
+
+        console.log('❌ 没有找到任何 Markdown 文件');
         return [];
     }
 
-    // 尝试加载已知的文件
-    async tryKnownFiles() {
-        const knownFiles = [
+    // 动态发现 Markdown 文件
+    async discoverMarkdownFiles() {
+        const discoveredFiles = [];
+        
+        // 尝试访问 posts 目录的索引（如果服务器支持目录列表）
+        try {
+            const response = await fetch(this.postsDirectory);
+            if (response.ok) {
+                const html = await response.text();
+                
+                // 解析 HTML 寻找 .md 文件链接
+                const mdFiles = this.extractMarkdownLinksFromHTML(html);
+                discoveredFiles.push(...mdFiles);
+                
+                if (mdFiles.length > 0) {
+                    console.log(`🎯 从目录索引发现 ${mdFiles.length} 个文件`);
+                }
+            }
+        } catch (error) {
+            console.log('📂 目录索引不可用，继续尝试其他方法...');
+        }
+
+        return discoveredFiles;
+    }
+
+    // 从 HTML 中提取 Markdown 文件链接
+    extractMarkdownLinksFromHTML(html) {
+        const mdFiles = [];
+        
+        // 匹配指向 .md 文件的链接
+        const linkRegex = /<a[^>]+href=['"](([^'"]*\.md))['"]/gi;
+        let match;
+        
+        while ((match = linkRegex.exec(html)) !== null) {
+            const filename = match[2];
+            // 确保是简单的文件名，不是路径
+            if (filename && !filename.includes('/') && !filename.includes('\\')) {
+                mdFiles.push(filename);
+            }
+        }
+        
+        // 去重
+        return [...new Set(mdFiles)];
+    }
+
+    // 尝试常见的文件名模式
+    async tryCommonFileNames() {
+        const commonPatterns = [
+            // 数字命名模式
+            ...Array.from({length: 20}, (_, i) => `${i + 1}.md`),
+            
+            // 常见文件名
+            'index.md',
             'welcome.md',
-            'javascript-modern-practices.md',
-            'css-modern-techniques.md',
-            'blog-development-summary.md'
+            'hello.md',
+            'first-post.md',
+            'introduction.md',
+            'about.md',
+            'test.md',
+            'demo.md',
+            'sample.md',
+            'test-dynamic-loading.md',
+            
+            // 技术相关常见名称
+            'javascript.md',
+            'css.md',
+            'html.md',
+            'react.md',
+            'vue.md',
+            'node.md',
+            'python.md',
+            'tutorial.md',
+            'guide.md',
+            'blog.md',
+            
+            // 日期模式 (YYYY-MM-DD)
+            ...this.generateDatePatterns()
         ];
 
         const existingFiles = [];
         
-        // 检查每个文件是否存在
-        for (const filename of knownFiles) {
+        // 批量检查文件存在性
+        const checkPromises = commonPatterns.map(async (filename) => {
             try {
-                // 先尝试 GET 请求，如果失败再尝试 HEAD
-                let response;
-                try {
-                    response = await fetch(`${this.postsDirectory}${filename}`);
-                } catch (error) {
-                    // 如果 GET 失败，尝试 HEAD 请求
-                    response = await fetch(`${this.postsDirectory}${filename}`, {
-                        method: 'HEAD'
-                    });
-                }
+                const response = await fetch(`${this.postsDirectory}${filename}`, {
+                    method: 'HEAD'
+                });
                 
                 if (response.ok) {
-                    existingFiles.push(filename);
                     console.log(`✓ 发现文章: ${filename}`);
-                } else {
-                    console.log(`✗ 文章不存在 (${response.status}): ${filename}`);
+                    return filename;
                 }
+                return null;
             } catch (error) {
-                console.log(`✗ 无法访问文章: ${filename} - ${error.message}`);
+                return null;
             }
-        }
+        });
+
+        const results = await Promise.allSettled(checkPromises);
+        
+        results.forEach((result) => {
+            if (result.status === 'fulfilled' && result.value) {
+                existingFiles.push(result.value);
+            }
+        });
 
         return existingFiles;
+    }
+
+    // 生成日期模式的文件名
+    generateDatePatterns() {
+        const patterns = [];
+        const currentYear = new Date().getFullYear();
+        
+        // 生成最近两年的月份模式
+        for (let year = currentYear - 1; year <= currentYear; year++) {
+            for (let month = 1; month <= 12; month++) {
+                const monthStr = month.toString().padStart(2, '0');
+                patterns.push(`${year}-${monthStr}.md`);
+                
+                // 添加一些常见的日期模式
+                for (let day of [1, 15]) {
+                    const dayStr = day.toString().padStart(2, '0');
+                    patterns.push(`${year}-${monthStr}-${dayStr}.md`);
+                }
+            }
+        }
+        
+        return patterns;
     }
 
     // 加载单个文章
