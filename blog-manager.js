@@ -35,15 +35,20 @@ class BlogManager {
     async initialize() {
         try {
             this.isLoading = true;
+            console.log('🔄 开始初始化博客管理器...');
+            
             await this.loadPosts();
+            
             this.isLoading = false;
+            console.log('✅ 博客管理器初始化完成');
             return true;
         } catch (error) {
-            console.error('Failed to initialize blog manager:', error);
+            console.error('❌ 博客管理器初始化失败:', error);
             this.isLoading = false;
             // 不再创建示例文章，只是初始化空的文章列表
             this.posts = [];
             this.extractCategories();
+            console.log('⚠️ 使用空文章列表继续运行');
             return true;
         }
     }
@@ -51,15 +56,19 @@ class BlogManager {
     // 加载所有博客文章
     async loadPosts() {
         try {
+            console.log('🔍 开始检测 Markdown 文件...');
+            
             // 获取 posts 目录下的所有 Markdown 文件
             const postFiles = await this.getMarkdownFiles();
             
             if (postFiles.length === 0) {
-                console.log('没有找到 Markdown 文章，请在 posts/ 目录下添加 .md 文件');
+                console.log('📝 没有找到 Markdown 文章，请在 posts/ 目录下添加 .md 文件');
                 this.posts = [];
                 this.extractCategories();
                 return;
             }
+
+            console.log(`📂 找到 ${postFiles.length} 个文章文件，开始加载...`);
 
             // 并行加载所有文章
             const loadPromises = postFiles.map(filename => this.loadPost(filename));
@@ -70,15 +79,25 @@ class BlogManager {
                 .filter(result => result.status === 'fulfilled' && result.value)
                 .map(result => result.value);
 
+            // 统计加载结果
+            const successCount = this.posts.length;
+            const failedCount = postFiles.length - successCount;
+            
+            if (failedCount > 0) {
+                console.warn(`⚠️ ${failedCount} 个文件加载失败`);
+            }
+
             // 按日期排序（最新的在前面）
             this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             this.extractCategories();
             
-            console.log(`成功加载 ${this.posts.length} 篇文章，来自 ${postFiles.length} 个文件`);
+            console.log(`✅ 成功加载 ${successCount} 篇文章，来自 ${postFiles.length} 个文件`);
+            console.log(`📊 文章分类: ${Array.from(this.categories).join(', ')}`);
         } catch (error) {
-            console.error('加载文章时出错:', error);
+            console.error('💥 加载文章时出错:', error);
             this.posts = [];
             this.extractCategories();
+            throw error;
         }
     }
 
