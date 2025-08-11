@@ -41,42 +41,91 @@ class BlogManager {
         } catch (error) {
             console.error('Failed to initialize blog manager:', error);
             this.isLoading = false;
-            await this.createSamplePosts();
+            // 不再创建示例文章，只是初始化空的文章列表
+            this.posts = [];
+            this.extractCategories();
             return true;
         }
     }
 
     // 加载所有博客文章
     async loadPosts() {
-        // 预定义的文章列表
-        const postFiles = [
-            'javascript-es2024-features.md',
-            'react-18-concurrent-features.md',
-            'vue3-composition-api.md',
-            'nodejs-performance-optimization.md',
-            'css-grid-flexbox-comparison.md',
-            'typescript-advanced-types.md'
-        ];
+        try {
+            // 获取 posts 目录下的所有 Markdown 文件
+            const postFiles = await this.getMarkdownFiles();
+            
+            if (postFiles.length === 0) {
+                console.log('没有找到 Markdown 文章，请在 posts/ 目录下添加 .md 文件');
+                this.posts = [];
+                this.extractCategories();
+                return;
+            }
 
-        const loadPromises = postFiles.map(filename => this.loadPost(filename));
-        const results = await Promise.allSettled(loadPromises);
+            // 并行加载所有文章
+            const loadPromises = postFiles.map(filename => this.loadPost(filename));
+            const results = await Promise.allSettled(loadPromises);
+            
+            // 过滤成功加载的文章
+            this.posts = results
+                .filter(result => result.status === 'fulfilled' && result.value)
+                .map(result => result.value);
+
+            // 按日期排序（最新的在前面）
+            this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            this.extractCategories();
+            
+            console.log(`成功加载 ${this.posts.length} 篇文章，来自 ${postFiles.length} 个文件`);
+        } catch (error) {
+            console.error('加载文章时出错:', error);
+            this.posts = [];
+            this.extractCategories();
+        }
+    }
+
+    // 获取 posts 目录下的所有 Markdown 文件
+    async getMarkdownFiles() {
+        // 首先尝试已知的文件列表
+        const knownFiles = await this.tryKnownFiles();
         
-        // 过滤成功加载的文章
-        this.posts = results
-            .filter(result => result.status === 'fulfilled' && result.value)
-            .map(result => result.value);
-
-        // 如果没有加载到文章，创建示例文章
-        if (this.posts.length === 0) {
-            await this.createSamplePosts();
+        if (knownFiles.length > 0) {
+            console.log(`找到 ${knownFiles.length} 个已知的 Markdown 文件`);
+            return knownFiles;
         }
 
-        // 按日期排序
-        this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        this.extractCategories();
+        // 如果没有找到已知文件，返回空数组
+        console.log('没有找到任何 Markdown 文件');
+        return [];
+    }
+
+    // 尝试加载已知的文件
+    async tryKnownFiles() {
+        const knownFiles = [
+            'welcome.md',
+            'javascript-modern-practices.md',
+            'css-modern-techniques.md',
+            'blog-development-summary.md'
+        ];
+
+        const existingFiles = [];
         
-        console.log(`Loaded ${this.posts.length} posts`);
-        return this.posts;
+        // 检查每个文件是否存在
+        for (const filename of knownFiles) {
+            try {
+                const response = await fetch(`${this.postsDirectory}${filename}`, {
+                    method: 'HEAD' // 只检查文件是否存在，不下载内容
+                });
+                if (response.ok) {
+                    existingFiles.push(filename);
+                    console.log(`✓ 发现文章: ${filename}`);
+                } else {
+                    console.log(`✗ 文章不存在: ${filename}`);
+                }
+            } catch (error) {
+                console.log(`✗ 无法访问文章: ${filename}`);
+            }
+        }
+
+        return existingFiles;
     }
 
     // 加载单个文章
@@ -97,12 +146,8 @@ class BlogManager {
     }
 
     // 创建示例文章（空实现 - 所有示例已删除）
-    // 创建示例文章（空实现 - 所有示例已删除）
-    async createSamplePosts() {
-        console.log('示例文章已清空，请在 posts/ 目录下添加真实的 Markdown 文章');
-        this.posts = [];
-        this.extractCategories();
-    }
+    // 示例文章方法已完全移除
+    // 不再需要创建示例文章，系统专注于处理真实的 Markdown 文件
 
     // 解析 Markdown 文章
     parseMarkdownPost(content, filename) {
