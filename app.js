@@ -507,8 +507,320 @@ class BlogApp {
         }
     }
 
-    // 其他方法将在后续添加...
-    // (由于内容过长，将分部分实现)
+    // 打字效果
+    startTypingEffect() {
+        const textElement = this.elements.typingText;
+        if (!textElement) return;
+
+        const texts = [
+            '技术博客',
+            '编程分享', 
+            '开发心得',
+            '代码人生'
+        ];
+        
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const pauseTime = 2000;
+
+        const typeText = () => {
+            const currentText = texts[textIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let nextDelay = isDeleting ? deletingSpeed : typingSpeed;
+
+            if (!isDeleting && charIndex === currentText.length) {
+                nextDelay = pauseTime;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % texts.length;
+                nextDelay = typingSpeed;
+            }
+
+            setTimeout(typeText, nextDelay);
+        };
+
+        typeText();
+    }
+
+    // 更新统计信息
+    updateStats() {
+        if (!this.blogManager) return;
+
+        const stats = this.blogManager.getStats();
+        
+        if (this.elements.articleCount) {
+            this.animateNumber(this.elements.articleCount, stats.articleCount);
+        }
+        
+        if (this.elements.categoryCount) {
+            this.animateNumber(this.elements.categoryCount, stats.categoryCount);
+        }
+        
+        if (this.elements.totalWords) {
+            this.animateNumber(this.elements.totalWords, stats.totalWords);
+        }
+    }
+
+    // 数字动画
+    animateNumber(element, targetNumber) {
+        const startNumber = parseInt(element.textContent) || 0;
+        const increment = Math.ceil((targetNumber - startNumber) / 20);
+        let currentNumber = startNumber;
+
+        const animate = () => {
+            currentNumber += increment;
+            if (currentNumber >= targetNumber) {
+                element.textContent = targetNumber;
+            } else {
+                element.textContent = currentNumber;
+                requestAnimationFrame(animate);
+            }
+        };
+
+        animate();
+    }
+
+    // 加载最新文章
+    loadRecentPosts() {
+        if (!this.blogManager || !this.elements.recentPostsGrid) return;
+
+        const posts = this.blogManager.getPosts().slice(0, 3);
+        
+        if (posts.length === 0) {
+            this.elements.recentPostsGrid.innerHTML = `
+                <div class="no-posts">
+                    <div class="no-posts-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>暂无文章</h3>
+                    <p>请在 posts/ 目录下添加 Markdown 文章</p>
+                </div>
+            `;
+            return;
+        }
+
+        this.elements.recentPostsGrid.innerHTML = posts.map(post => `
+            <article class="recent-post-card" data-article-id="${post.id}">
+                <div class="post-category">
+                    <i class="fas fa-tag"></i>
+                    ${post.category}
+                </div>
+                <h3 class="post-title">${post.title}</h3>
+                <p class="post-excerpt">${post.excerpt}</p>
+                <div class="post-meta">
+                    <span class="post-date">
+                        <i class="fas fa-calendar"></i>
+                        ${post.date}
+                    </span>
+                    <span class="post-read-time">
+                        <i class="fas fa-clock"></i>
+                        ${post.readTime}
+                    </span>
+                </div>
+            </article>
+        `).join('');
+    }
+
+    // 滚动到顶部
+    scrollToTop(smooth = true) {
+        window.scrollTo({
+            top: 0,
+            behavior: smooth ? 'smooth' : 'auto'
+        });
+    }
+
+    // 关闭所有模态框
+    closeAllModals() {
+        // 关闭搜索模态框
+        this.closeSearchModal();
+    }
+
+    // 搜索模态框控制
+    openSearchModal() {
+        if (this.elements.searchModal) {
+            this.elements.searchModal.classList.add('active');
+            this.elements.searchInput?.focus();
+        }
+    }
+
+    closeSearchModal() {
+        if (this.elements.searchModal) {
+            this.elements.searchModal.classList.remove('active');
+        }
+    }
+
+    // 加载博客文章列表（简化版）
+    loadBlogPosts() {
+        if (!this.blogManager || !this.elements.blogGrid) return;
+
+        const posts = this.blogManager.getPosts();
+        
+        if (posts.length === 0) {
+            this.elements.blogGrid.innerHTML = `
+                <div class="no-posts">
+                    <div class="no-posts-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>暂无文章</h3>
+                    <p>请在 posts/ 目录下添加 Markdown 文章</p>
+                </div>
+            `;
+            return;
+        }
+
+        this.elements.blogGrid.innerHTML = posts.map(post => `
+            <article class="blog-card" data-article-id="${post.id}">
+                <div class="blog-card-header">
+                    <span class="blog-card-category">${post.category}</span>
+                    <span class="blog-card-date">${post.date}</span>
+                </div>
+                <h3 class="blog-card-title">${post.title}</h3>
+                <p class="blog-card-excerpt">${post.excerpt}</p>
+                <div class="blog-card-footer">
+                    <div class="blog-card-tags">
+                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <span class="blog-card-read-time">${post.readTime}</span>
+                </div>
+            </article>
+        `).join('');
+    }
+
+    // 加载分类过滤器（简化版）
+    loadCategoryFilters() {
+        if (!this.blogManager || !this.elements.categoryFilters) return;
+
+        const categories = this.blogManager.getCategories();
+        
+        this.elements.categoryFilters.innerHTML = `
+            <button class="category-filter active" data-category="all">
+                全部 (${this.blogManager.getPosts().length})
+            </button>
+            ${categories.map(category => `
+                <button class="category-filter" data-category="${category}">
+                    ${category} (${this.blogManager.getPostsByCategory(category).length})
+                </button>
+            `).join('')}
+        `;
+    }
+
+    // 加载分类页面（简化版）
+    loadCategoriesPage() {
+        if (!this.blogManager || !this.elements.categoriesGrid) return;
+
+        const categories = this.blogManager.getCategories();
+        
+        if (categories.length === 0) {
+            this.elements.categoriesGrid.innerHTML = `
+                <div class="no-categories">
+                    <div class="no-categories-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>暂无分类</h3>
+                    <p>添加文章后将自动生成分类</p>
+                </div>
+            `;
+            return;
+        }
+
+        this.elements.categoriesGrid.innerHTML = categories.map(category => {
+            const posts = this.blogManager.getPostsByCategory(category);
+            return `
+                <div class="category-card" data-category="${category}">
+                    <div class="category-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <h3 class="category-name">${category}</h3>
+                    <p class="category-count">${posts.length} 篇文章</p>
+                    <div class="category-posts">
+                        ${posts.slice(0, 3).map(post => `
+                            <div class="category-post" data-article-id="${post.id}">
+                                <span class="post-title">${post.title}</span>
+                                <span class="post-date">${post.date}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 显示文章详情（简化版）
+    showArticle(articleId) {
+        if (!this.blogManager) return;
+
+        const article = this.blogManager.getPostById(articleId);
+        if (!article) {
+            this.showNotification('文章不存在', 'error');
+            return;
+        }
+
+        // 渲染文章内容
+        if (this.elements.articleContent) {
+            this.elements.articleContent.innerHTML = this.blogManager.renderMarkdown(article.content);
+        }
+
+        // 更新文章元信息
+        if (this.elements.articleMeta) {
+            this.elements.articleMeta.innerHTML = `
+                <div class="article-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>${article.date}</span>
+                </div>
+                <div class="article-meta-item">
+                    <i class="fas fa-folder"></i>
+                    <span>${article.category}</span>
+                </div>
+                <div class="article-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>${article.readTime}</span>
+                </div>
+                <div class="article-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>${article.author}</span>
+                </div>
+            `;
+        }
+
+        // 切换到文章页面
+        this.showPage('article');
+    }
+
+    // 处理滚动事件
+    handleScroll() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // 显示/隐藏返回顶部按钮
+        if (this.elements.backToTop) {
+            if (scrollTop > 300) {
+                this.elements.backToTop.style.display = 'block';
+            } else {
+                this.elements.backToTop.style.display = 'none';
+            }
+        }
+    }
+
+    // 其他简化的方法存根
+    performBlogSearch() { console.log('博客搜索功能'); }
+    performGlobalSearch() { console.log('全局搜索功能'); }
+    toggleSortMenu() { console.log('排序菜单功能'); }
+    setSortOption() { console.log('设置排序选项'); }
+    setViewMode() { console.log('设置视图模式'); }
+    setActiveCategory() { console.log('设置活动分类'); }
+    navigateArticle() { console.log('文章导航功能'); }
+    shareCurrentArticle() { console.log('分享文章功能'); }
 }
 
 // 应用初始化
