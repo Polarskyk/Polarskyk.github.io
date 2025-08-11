@@ -85,9 +85,6 @@ class BlogApp {
             blogGrid: document.getElementById('blogGrid'),
             pagination: document.getElementById('pagination'),
             
-            // 分类页相关
-            categoriesGrid: document.getElementById('categoriesGrid'),
-            
             // 文章详情页相关
             articleBreadcrumb: document.getElementById('articleBreadcrumb'),
             articleMeta: document.getElementById('articleMeta'),
@@ -366,9 +363,6 @@ class BlogApp {
             case 'blog-list':
                 this.initBlogListPage();
                 break;
-            case 'categories':
-                this.initCategoriesPage();
-                break;
             case 'article':
                 // 文章页由 showArticle 方法处理
                 break;
@@ -394,11 +388,6 @@ class BlogApp {
         
         // 加载文章列表
         this.loadBlogPosts();
-    }
-
-    // 初始化分类页
-    initCategoriesPage() {
-        this.loadCategoriesPage();
     }
 
     // 初始化关于页
@@ -696,65 +685,6 @@ class BlogApp {
                 </div>
             </article>
         `).join('');
-    }
-
-    // 加载分类过滤器（简化版）
-    loadCategoryFilters() {
-        if (!this.blogManager || !this.elements.categoryFilters) return;
-
-        const categories = this.blogManager.getCategories();
-        
-        this.elements.categoryFilters.innerHTML = `
-            <button class="category-filter active" data-category="all">
-                全部 (${this.blogManager.getPosts().length})
-            </button>
-            ${categories.map(category => `
-                <button class="category-filter" data-category="${category}">
-                    ${category} (${this.blogManager.getPostsByCategory(category).length})
-                </button>
-            `).join('')}
-        `;
-    }
-
-    // 加载分类页面（简化版）
-    loadCategoriesPage() {
-        if (!this.blogManager || !this.elements.categoriesGrid) return;
-
-        const categories = this.blogManager.getCategories();
-        
-        if (categories.length === 0) {
-            this.elements.categoriesGrid.innerHTML = `
-                <div class="no-categories">
-                    <div class="no-categories-icon">
-                        <i class="fas fa-tags"></i>
-                    </div>
-                    <h3>暂无分类</h3>
-                    <p>添加文章后将自动生成分类</p>
-                </div>
-            `;
-            return;
-        }
-
-        this.elements.categoriesGrid.innerHTML = categories.map(category => {
-            const posts = this.blogManager.getPostsByCategory(category);
-            return `
-                <div class="category-card" data-category="${category}">
-                    <div class="category-icon">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                    <h3 class="category-name">${category}</h3>
-                    <p class="category-count">${posts.length} 篇文章</p>
-                    <div class="category-posts">
-                        ${posts.slice(0, 3).map(post => `
-                            <div class="category-post" data-article-id="${post.id}">
-                                <span class="post-title">${post.title}</span>
-                                <span class="post-date">${post.date}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }).join('');
     }
 
     // 显示文章详情（简化版）

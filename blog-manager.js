@@ -130,17 +130,25 @@ class BlogManager {
         // 检查每个文件是否存在
         for (const filename of knownFiles) {
             try {
-                const response = await fetch(`${this.postsDirectory}${filename}`, {
-                    method: 'HEAD' // 只检查文件是否存在，不下载内容
-                });
+                // 先尝试 GET 请求，如果失败再尝试 HEAD
+                let response;
+                try {
+                    response = await fetch(`${this.postsDirectory}${filename}`);
+                } catch (error) {
+                    // 如果 GET 失败，尝试 HEAD 请求
+                    response = await fetch(`${this.postsDirectory}${filename}`, {
+                        method: 'HEAD'
+                    });
+                }
+                
                 if (response.ok) {
                     existingFiles.push(filename);
                     console.log(`✓ 发现文章: ${filename}`);
                 } else {
-                    console.log(`✗ 文章不存在: ${filename}`);
+                    console.log(`✗ 文章不存在 (${response.status}): ${filename}`);
                 }
             } catch (error) {
-                console.log(`✗ 无法访问文章: ${filename}`);
+                console.log(`✗ 无法访问文章: ${filename} - ${error.message}`);
             }
         }
 
