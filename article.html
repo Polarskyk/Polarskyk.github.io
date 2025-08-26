@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">文章详情 - Polarsky's Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        /* 文章页面专用样式 */
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .article-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .article-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .article-tag {
+            background: var(--surface-color);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .article-content h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.25rem;
+        }
+
+        .article-content p {
+            margin: 1rem 0;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .article-content li {
+            margin: 0.5rem 0;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            background: var(--surface-color);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-style: italic;
+        }
+
+        .article-content code {
+            background: var(--surface-color);
+            color: var(--primary-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .article-content pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .article-content th,
+        .article-content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .article-content th {
+            background: var(--surface-color);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            color: var(--primary-dark);
+            transform: translateX(-2px);
+        }
+
+        .loading-article {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .error-article {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-article h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .toc {
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .toc h4 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .toc li {
+            margin: 0.5rem 0;
+        }
+
+        .toc a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .toc a:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .article-container {
+                padding: 1rem;
+            }
+
+            .article-title {
+                font-size: 2rem;
+            }
+
+            .article-meta {
+                gap: 1rem;
+            }
+
+            .article-content {
+                font-size: 1rem;
+            }
+
+            .article-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .article-content h2 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <header class="header">
+            <nav class="nav">
+                <div class="nav-brand">
+                    <h1 class="logo">Polarsky's Blog</h1>
+                    <p class="tagline">探索技术，分享思考</p>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="#about" class="nav-link">关于</a>
+                    <a href="https://github.com/Polarskyk" class="nav-link" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="article-container">
+                <!-- 返回按钮 -->
+                <a href="index.html" class="back-button">
+                    ← 返回首页
+                </a>
+
+                <!-- 加载状态 -->
+                <div class="loading-article" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载文章...</p>
+                </div>
+
+                <!-- 错误状态 -->
+                <div class="error-article hidden" id="error">
+                    <h2>😕 文章加载失败</h2>
+                    <p>抱歉，无法找到您要查看的文章。</p>
+                    <a href="index.html" class="back-button">返回首页</a>
+                </div>
+
+                <!-- 文章内容 -->
+                <article class="article hidden" id="article">
+                    <header class="article-header">
+                        <h1 class="article-title" id="article-title"></h1>
+                        <div class="article-meta" id="article-meta"></div>
+                        <p class="article-description" id="article-description"></p>
+                        <div class="article-tags" id="article-tags"></div>
+                    </header>
+
+                    <!-- 目录 -->
+                    <div class="toc hidden" id="toc">
+                        <h4>📋 文章目录</h4>
+                        <ul id="toc-list"></ul>
+                    </div>
+
+                    <div class="article-content" id="article-content"></div>
+                </article>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Polarsky's Blog</h4>
+                    <p>一个热爱技术的前端开发者</p>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <p>Email: contact@polarsky.dev</p>
+                    <p>GitHub: @Polarskyk</p>
+                </div>
+                <div class="footer-section">
+                    <h4>友情链接</h4>
+                    <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://developer.mozilla.org" target="_blank" rel="noopener">MDN</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Polarsky's Blog. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', loadArticle);
+
+        async function loadArticle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filename = urlParams.get('file');
+
+            if (!filename) {
+                showError();
+                return;
+            }
+
+            try {
+                const response = await fetch(`posts/${filename}`);
+                if (!response.ok) throw new Error('文章不存在');
+
+                const content = await response.text();
+                const article = parseMarkdownFile(content, filename);
+                displayArticle(article);
+            } catch (error) {
+                console.error('加载文章失败:', error);
+                showError();
+            }
+        }
+
+        function parseMarkdownFile(content, filename) {
+            const lines = content.split('\n');
+            let frontMatterEnd = -1;
+            let frontMatter = {};
+
+            // 解析 Front Matter
+            if (lines[0] === '---') {
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i] === '---') {
+                        frontMatterEnd = i;
+                        break;
+                    }
+                    const match = lines[i].match(/^(\w+):\s*(.+)$/);
+                    if (match) {
+                        const [, key, value] = match;
+                        if (key === 'tags' && value.startsWith('[')) {
+                            frontMatter[key] = JSON.parse(value.replace(/"/g, '"'));
+                        } else {
+                            frontMatter[key] = value.replace(/['"]/g, '');
+                        }
+                    }
+                }
+            }
+
+            const articleContent = lines.slice(frontMatterEnd + 1).join('\n');
+            const wordCount = articleContent.replace(/[^\u4e00-\u9fa5\w]/g, '').length;
+            const readTime = Math.max(1, Math.ceil(wordCount / 300));
+
+            return {
+                title: frontMatter.title || '无标题',
+                date: frontMatter.date || '未知日期',
+                category: frontMatter.category || '未分类',
+                tags: frontMatter.tags || [],
+                description: frontMatter.description || '',
+                content: articleContent,
+                readTime: readTime
+            };
+        }
+
+        function displayArticle(article) {
+            // 更新页面标题
+            document.title = `${article.title} - Polarsky's Blog`;
+            document.getElementById('page-title').textContent = `${article.title} - Polarsky's Blog`;
+
+            // 填充文章信息
+            document.getElementById('article-title').textContent = article.title;
+            
+            const metaHTML = `
+                <div class="article-meta-item">
+                    📅 ${formatDate(article.date)}
+                </div>
+                <div class="article-meta-item">
+                    📁 ${article.category}
+                </div>
+                <div class="article-meta-item">
+                    ⏱️ ${article.readTime} 分钟阅读
+                </div>
+            `;
+            document.getElementById('article-meta').innerHTML = metaHTML;
+
+            if (article.description) {
+                document.getElementById('article-description').textContent = article.description;
+            } else {
+                document.getElementById('article-description').style.display = 'none';
+            }
+
+            if (article.tags && article.tags.length > 0) {
+                const tagsHTML = article.tags.map(tag => 
+                    `<span class="article-tag"># ${escapeHtml(tag)}</span>`
+                ).join('');
+                document.getElementById('article-tags').innerHTML = tagsHTML;
+            } else {
+                document.getElementById('article-tags').style.display = 'none';
+            }
+
+            // 渲染Markdown内容
+            const htmlContent = marked.parse(article.content);
+            document.getElementById('article-content').innerHTML = htmlContent;
+
+            // 生成目录
+            generateTOC();
+
+            // 代码高亮
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+
+            // 显示文章，隐藏加载状态
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('article').classList.remove('hidden');
+        }
+
+        function generateTOC() {
+            const headings = document.querySelectorAll('#article-content h1, #article-content h2, #article-content h3');
+            if (headings.length === 0) return;
+
+            const tocList = document.getElementById('toc-list');
+            const tocContainer = document.getElementById('toc');
+
+            headings.forEach((heading, index) => {
+                const id = `heading-${index}`;
+                heading.id = id;
+
+                const li = document.createElement('li');
+                li.style.marginLeft = `${(parseInt(heading.tagName.charAt(1)) - 1) * 1}rem`;
+                
+                const a = document.createElement('a');
+                a.href = `#${id}`;
+                a.textContent = heading.textContent;
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    heading.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+
+            tocContainer.classList.remove('hidden');
+        }
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
