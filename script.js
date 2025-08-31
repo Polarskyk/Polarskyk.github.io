@@ -20,20 +20,27 @@ const articleCountElement = document.getElementById('article-count');
 
 // 获取正确的posts路径
 function getPostsPath(filename = '') {
-    const currentPath = window.location.pathname;
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
     
-    // 如果是GitHub Pages (路径包含仓库名)
-    if (currentPath.includes('/Polarskyk.github.io/') || currentPath.includes('.github.io')) {
-        // 检查是否已经在正确的仓库路径下
-        if (currentPath.includes('/Polarskyk.github.io/')) {
+    // 检查是否是GitHub Pages环境
+    if (hostname.includes('github.io')) {
+        // 对于用户/组织仓库 (username.github.io)，直接在根目录
+        if (hostname.match(/^[\w-]+\.github\.io$/)) {
             return filename ? `./posts/${filename}` : './posts/';
-        } else {
-            return filename ? `./Polarskyk.github.io/posts/${filename}` : './Polarskyk.github.io/posts/';
+        }
+        // 对于项目仓库 (username.github.io/project-name)
+        else {
+            const pathParts = pathname.split('/').filter(p => p);
+            if (pathParts.length > 0) {
+                const repoName = pathParts[0];
+                return filename ? `./${repoName}/posts/${filename}` : `./${repoName}/posts/`;
+            }
         }
     }
     
-    // 本地开发环境
-    return filename ? `posts/${filename}` : 'posts/';
+    // 本地开发环境或其他环境
+    return filename ? `./posts/${filename}` : './posts/';
 }
 
 // 初始化应用
@@ -483,8 +490,24 @@ function openArticleFromCard(cardElement) {
 
 // 打开文章详情
 function openArticle(filename, downloadUrl) {
+    // 获取正确的article.html路径
+    let articleBasePath = './article.html';
+    
+    // 如果是GitHub Pages环境，需要处理路径
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+    
+    if (hostname.includes('github.io') && !hostname.match(/^[\w-]+\.github\.io$/)) {
+        // 项目仓库需要包含仓库名路径
+        const pathParts = pathname.split('/').filter(p => p);
+        if (pathParts.length > 0) {
+            const repoName = pathParts[0];
+            articleBasePath = `./${repoName}/article.html`;
+        }
+    }
+    
     // 创建文章详情页面URL，带上download_url参数（如有）
-    let articleUrl = `article.html?file=${encodeURIComponent(filename)}`;
+    let articleUrl = `${articleBasePath}?file=${encodeURIComponent(filename)}`;
     if (downloadUrl && downloadUrl.trim()) {
         articleUrl += `&download_url=${encodeURIComponent(downloadUrl)}`;
     }

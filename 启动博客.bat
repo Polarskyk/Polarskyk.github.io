@@ -26,7 +26,8 @@ echo.
 
 echo 正在启动HTTP服务器...
 echo 📁 目录: %CD%
-echo 🌐 地址: http://localhost:8000
+echo 🌐 博客地址: http://localhost:8000
+echo 🔧 路径测试: http://localhost:8000/path-test.html
 echo.
 echo ⚠️  请保持此窗口打开
 echo 💡 按 Ctrl+C 停止服务器

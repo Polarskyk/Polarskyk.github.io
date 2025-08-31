@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径测试 - Polarsky's Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+        .info { background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #007acc; }
+        .path { background: #f5f5f5; padding: 10px; font-family: monospace; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>GitHub Pages 路径测试页面</h1>
+    
+    <div class="info">
+        <h3>当前环境信息</h3>
+        <div class="path">协议: <span id="protocol"></span></div>
+        <div class="path">主机名: <span id="hostname"></span></div>
+        <div class="path">路径名: <span id="pathname"></span></div>
+        <div class="path">完整URL: <span id="fullurl"></span></div>
+    </div>
+
+    <div class="info">
+        <h3>计算的路径</h3>
+        <div class="path">Posts目录: <span id="posts-path"></span></div>
+        <div class="path">Index文件: <span id="index-path"></span></div>
+        <div class="path">首页链接: <span id="home-path"></span></div>
+        <div class="path">文章页链接: <span id="article-path"></span></div>
+    </div>
+
+    <div class="info">
+        <h3>环境检测</h3>
+        <div class="path">是否GitHub Pages: <span id="is-github-pages"></span></div>
+        <div class="path">是否用户仓库: <span id="is-user-repo"></span></div>
+        <div class="path">是否项目仓库: <span id="is-project-repo"></span></div>
+        <div class="path">仓库名: <span id="repo-name"></span></div>
+    </div>
+
+    <div class="info">
+        <h3>测试链接</h3>
+        <p><a href="index.html" id="home-link">返回首页</a></p>
+        <p><a href="article.html?file=welcome.md" id="article-link">测试文章页</a></p>
+    </div>
+
+    <script>
+        // 获取正确的posts路径
+        function getPostsPath(filename = '') {
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+            
+            // 检查是否是GitHub Pages环境
+            if (hostname.includes('github.io')) {
+                // 对于用户/组织仓库 (username.github.io)，直接在根目录
+                if (hostname.match(/^[\w-]+\.github\.io$/)) {
+                    return filename ? `./posts/${filename}` : './posts/';
+                }
+                // 对于项目仓库 (username.github.io/project-name)
+                else {
+                    const pathParts = pathname.split('/').filter(p => p);
+                    if (pathParts.length > 0) {
+                        const repoName = pathParts[0];
+                        return filename ? `./${repoName}/posts/${filename}` : `./${repoName}/posts/`;
+                    }
+                }
+            }
+            
+            // 本地开发环境或其他环境
+            return filename ? `./posts/${filename}` : './posts/';
+        }
+
+        // 获取正确的首页链接
+        function getHomePageUrl() {
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+            
+            if (hostname.includes('github.io')) {
+                if (hostname.match(/^[\w-]+\.github\.io$/)) {
+                    return './index.html';
+                } else {
+                    const pathParts = pathname.split('/').filter(p => p);
+                    if (pathParts.length > 0) {
+                        const repoName = pathParts[0];
+                        return `./${repoName}/index.html`;
+                    }
+                }
+            }
+            
+            return './index.html';
+        }
+
+        // 获取文章页链接
+        function getArticlePageUrl() {
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+            
+            if (hostname.includes('github.io') && !hostname.match(/^[\w-]+\.github\.io$/)) {
+                const pathParts = pathname.split('/').filter(p => p);
+                if (pathParts.length > 0) {
+                    const repoName = pathParts[0];
+                    return `./${repoName}/article.html`;
+                }
+            }
+            
+            return './article.html';
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+
+            // 显示环境信息
+            document.getElementById('protocol').textContent = window.location.protocol;
+            document.getElementById('hostname').textContent = hostname;
+            document.getElementById('pathname').textContent = pathname;
+            document.getElementById('fullurl').textContent = window.location.href;
+
+            // 显示计算的路径
+            document.getElementById('posts-path').textContent = getPostsPath();
+            document.getElementById('index-path').textContent = getPostsPath('index.json');
+            document.getElementById('home-path').textContent = getHomePageUrl();
+            document.getElementById('article-path').textContent = getArticlePageUrl();
+
+            // 环境检测
+            const isGitHubPages = hostname.includes('github.io');
+            const isUserRepo = hostname.match(/^[\w-]+\.github\.io$/);
+            const isProjectRepo = isGitHubPages && !isUserRepo;
+            const repoName = isProjectRepo ? pathname.split('/').filter(p => p)[0] || '未检测到' : '不适用';
+
+            document.getElementById('is-github-pages').textContent = isGitHubPages ? '是' : '否';
+            document.getElementById('is-user-repo').textContent = isUserRepo ? '是' : '否';
+            document.getElementById('is-project-repo').textContent = isProjectRepo ? '是' : '否';
+            document.getElementById('repo-name').textContent = repoName;
+
+            // 更新测试链接
+            document.getElementById('home-link').href = getHomePageUrl();
+            document.getElementById('article-link').href = getArticlePageUrl() + '?file=welcome.md';
+        });
+    </script>
+</body>
+</html>
