@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.clou                    <a href="./" class="back-button">返回首页</a>
+                    <button onclick="location.reload()" class="back-button" style="margin-left: 1rem;">重试</button>lare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         /* 文章页面专用样式 */
         .article-container {
@@ -285,7 +286,7 @@
                     <p class="tagline">探索技术，分享思考</p>
                 </div>
                 <div class="nav-links">
-                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="./" class="nav-link">首页</a>
                     <a href="#about" class="nav-link">关于</a>
                     <a href="https://github.com/Polarskyk" class="nav-link" target="_blank" rel="noopener">GitHub</a>
                 </div>
@@ -295,7 +296,7 @@
         <main class="main">
             <div class="article-container">
                 <!-- 返回按钮 -->
-                <a href="index.html" class="back-button">
+                <a href="./" class="back-button">
                     ← 返回首页
                 </a>
 
@@ -390,11 +391,12 @@
                     }
                     content = await response.text();
                 } else {
-                    // 本地加载
-                    console.log('从本地路径加载:', `posts/${filename}`);
-                    response = await fetch(`posts/${filename}`);
+                    // 本地加载 - 处理GitHub Pages路径
+                    const postsPath = getPostsPath(filename);
+                    console.log('从本地路径加载:', postsPath);
+                    response = await fetch(postsPath);
                     if (!response.ok) {
-                        throw new Error(`本地文件不存在 (${response.status}): posts/${filename}`);
+                        throw new Error(`本地文件不存在 (${response.status}): ${postsPath}`);
                     }
                     content = await response.text();
                 }
@@ -413,6 +415,24 @@
                 console.error('加载文章失败:', error);
                 showError(`加载失败: ${error.message}`);
             }
+        }
+
+        // 获取正确的posts路径
+        function getPostsPath(filename) {
+            const currentPath = window.location.pathname;
+            
+            // 如果是GitHub Pages (路径包含仓库名)
+            if (currentPath.includes('/Polarskyk.github.io/') || currentPath.includes('.github.io')) {
+                // 检查是否已经在正确的仓库路径下
+                if (currentPath.includes('/Polarskyk.github.io/')) {
+                    return `./posts/${filename}`;
+                } else {
+                    return `./Polarskyk.github.io/posts/${filename}`;
+                }
+            }
+            
+            // 本地开发环境
+            return `posts/${filename}`;
         }
 
         function parseMarkdownFile(content, filename) {

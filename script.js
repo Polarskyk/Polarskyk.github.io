@@ -18,6 +18,24 @@ const searchInput = document.getElementById('search-input');
 const filterTabs = document.querySelectorAll('.filter-tab');
 const articleCountElement = document.getElementById('article-count');
 
+// 获取正确的posts路径
+function getPostsPath(filename = '') {
+    const currentPath = window.location.pathname;
+    
+    // 如果是GitHub Pages (路径包含仓库名)
+    if (currentPath.includes('/Polarskyk.github.io/') || currentPath.includes('.github.io')) {
+        // 检查是否已经在正确的仓库路径下
+        if (currentPath.includes('/Polarskyk.github.io/')) {
+            return filename ? `./posts/${filename}` : './posts/';
+        } else {
+            return filename ? `./Polarskyk.github.io/posts/${filename}` : './Polarskyk.github.io/posts/';
+        }
+    }
+    
+    // 本地开发环境
+    return filename ? `posts/${filename}` : 'posts/';
+}
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -90,7 +108,8 @@ async function getFilesFromGitHub() {
 // 从本地索引文件获取文章列表
 async function getFilesFromIndex() {
     try {
-        const response = await fetch('posts/index.json');
+        const indexPath = getPostsPath('index.json');
+        const response = await fetch(indexPath);
         if (!response.ok) throw new Error('索引文件不存在');
         
         const data = await response.json();
@@ -115,7 +134,8 @@ async function loadArticlesFromList(filesList) {
                 content = await response.text();
             } else {
                 // 否则直接从posts文件夹获取
-                const response = await fetch(`posts/${fileInfo.filename}`);
+                const postsPath = getPostsPath(fileInfo.filename);
+                const response = await fetch(postsPath);
                 if (!response.ok) throw new Error(`Failed to load ${fileInfo.filename}`);
                 content = await response.text();
             }
@@ -176,7 +196,8 @@ async function discoverMarkdownFiles() {
     // 并行尝试多个可能的文件
     const promises = filesToTry.map(async (filename) => {
         try {
-            const response = await fetch(`posts/${filename}`);
+            const postsPath = getPostsPath(filename);
+            const response = await fetch(postsPath);
             if (response.ok) {
                 const content = await response.text();
                 if (content && content.trim()) {
@@ -201,6 +222,50 @@ async function discoverMarkdownFiles() {
 }
 
 // 回退模式：使用预设的文件列表
+async function loadArticlesFallback() {
+    console.log('使用静态备选方案...');
+    
+    const knownFiles = [
+        'welcome.md',
+        'javascript-es2024-features.md',
+        'css-grid-flexbox-comparison.md',
+        'react-18-concurrent-features.md',
+        'blog-development-summary.md',
+        'css-modern-styling.md',
+        'css-modern-techniques.md',
+        'javascript-modern-practices.md',
+        'nodejs-performance-optimization.md',
+        'test-dynamic-loading.md',
+        '1.md'
+    ];
+
+    const promises = knownFiles.map(async (filename) => {
+        try {
+            const postsPath = getPostsPath(filename);
+            const response = await fetch(postsPath);
+            if (!response.ok) return null;
+            
+            const content = await response.text();
+            if (content && content.trim()) {
+                return parseMarkdownFile(content, filename);
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    });
+
+    const articles = await Promise.all(promises);
+    articlesData = articles.filter(article => article !== null);
+    filteredArticles = [...articlesData];
+    
+    // 按日期排序（最新的在前）
+    articlesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+    filteredArticles = [...articlesData];
+    
+    renderArticles(filteredArticles);
+    console.log('备选方案加载了', articlesData.length, '篇文章');
+}
 
 
 // 设置自动刷新检查新文章（仅在支持的环境下）
