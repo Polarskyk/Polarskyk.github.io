@@ -369,28 +369,49 @@
             const downloadUrl = urlParams.get('download_url');
 
             if (!filename) {
-                showError();
+                showError('未指定文章文件名');
                 return;
             }
 
+            console.log('正在加载文章:', filename);
+            console.log('下载链接:', downloadUrl || '使用本地路径');
+
             try {
                 let content = '';
+                let response;
+                
                 if (downloadUrl) {
                     // 优先通过download_url加载（GitHub raw文件）
-                    const response = await fetch(downloadUrl);
-                    if (!response.ok) throw new Error('文章不存在');
+                    console.log('尝试从GitHub加载:', downloadUrl);
+                    response = await fetch(downloadUrl);
+                    if (!response.ok) {
+                        console.warn('GitHub加载失败，尝试本地路径');
+                        throw new Error(`GitHub响应失败: ${response.status}`);
+                    }
                     content = await response.text();
                 } else {
                     // 本地加载
-                    const response = await fetch(`posts/${filename}`);
-                    if (!response.ok) throw new Error('文章不存在');
+                    console.log('从本地路径加载:', `posts/${filename}`);
+                    response = await fetch(`posts/${filename}`);
+                    if (!response.ok) {
+                        throw new Error(`本地文件不存在 (${response.status}): posts/${filename}`);
+                    }
                     content = await response.text();
                 }
+                
+                console.log('文章内容长度:', content.length);
+                
+                if (!content.trim()) {
+                    throw new Error('文章内容为空');
+                }
+                
                 const article = parseMarkdownFile(content, filename);
+                console.log('解析后的文章:', article);
                 displayArticle(article);
+                
             } catch (error) {
                 console.error('加载文章失败:', error);
-                showError();
+                showError(`加载失败: ${error.message}`);
             }
         }
 
@@ -515,9 +536,20 @@
             tocContainer.classList.remove('hidden');
         }
 
-        function showError() {
+        function showError(message = '文章加载失败') {
             document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
+            const errorElement = document.getElementById('error');
+            
+            // 更新错误消息
+            const errorContent = `
+                <h2>😕 ${message}</h2>
+                <p>抱歉，无法加载您要查看的文章。</p>
+                <p><small>错误详情：${message}</small></p>
+                <a href="index.html" class="back-button">返回首页</a>
+                <button onclick="location.reload()" class="back-button" style="margin-left: 1rem;">重试</button>
+            `;
+            errorElement.innerHTML = errorContent;
+            errorElement.classList.remove('hidden');
         }
 
         function formatDate(dateString) {

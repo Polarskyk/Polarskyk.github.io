@@ -308,10 +308,8 @@ function renderArticles(articles) {
     }
 
     articlesGrid.innerHTML = articles.map(article => {
-        // 如果有downloadUrl，带上参数
-        const urlParam = article.downloadUrl ? `?file=${encodeURIComponent(article.filename)}&download_url=${encodeURIComponent(article.downloadUrl)}` : `?file=${encodeURIComponent(article.filename)}`;
         return `
-        <article class="article-card" onclick="openArticle('${article.filename}', '${article.downloadUrl ? article.downloadUrl : ''}')">
+        <article class="article-card" data-filename="${escapeHtml(article.filename)}" data-download-url="${escapeHtml(article.downloadUrl || '')}" onclick="openArticleFromCard(this)">
             <div class="article-header">
                 <h3 class="article-title">${escapeHtml(article.title)}</h3>
                 <p class="article-description">${escapeHtml(article.description)}</p>
@@ -387,13 +385,21 @@ function handleCategoryFilter(e) {
     renderArticles(filteredArticles);
 }
 
+// 从卡片元素打开文章详情
+function openArticleFromCard(cardElement) {
+    const filename = cardElement.getAttribute('data-filename');
+    const downloadUrl = cardElement.getAttribute('data-download-url');
+    openArticle(filename, downloadUrl);
+}
+
 // 打开文章详情
 function openArticle(filename, downloadUrl) {
     // 创建文章详情页面URL，带上download_url参数（如有）
     let articleUrl = `article.html?file=${encodeURIComponent(filename)}`;
-    if (downloadUrl) {
+    if (downloadUrl && downloadUrl.trim()) {
         articleUrl += `&download_url=${encodeURIComponent(downloadUrl)}`;
     }
+    console.log('打开文章:', filename, '链接:', articleUrl);
     window.open(articleUrl, '_blank');
 }
 
