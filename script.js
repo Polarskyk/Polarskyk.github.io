@@ -55,9 +55,17 @@ async function loadArticles() {
     console.log('开始加载文章...');
     console.log('当前路径:', window.location.pathname);
     console.log('当前主机:', window.location.hostname);
+    console.log('当前协议:', window.location.protocol);
+    
+    // 检测file://协议
+    if (window.location.protocol === 'file:') {
+        console.log('检测到file://协议，无法加载外部文件');
+        showError('请使用HTTP服务器访问此页面。\n\n请在命令行中运行：\npython -m http.server 8000\n\n然后访问 http://localhost:8000');
+        return;
+    }
     
     // 如果是本地开发环境，直接使用备选方案
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('检测到本地环境，使用备选方案');
         await loadArticlesFallback();
         return;
@@ -496,13 +504,14 @@ function hideLoading() {
 
 // 显示错误信息
 function showError(message) {
-    articlesGrid.innerHTML = `
+    const errorHTML = `
         <div class="error-message">
             <h3>😕 出现了一些问题</h3>
-            <p>${message}</p>
+            <pre style="white-space: pre-wrap; font-family: inherit; background: var(--surface-color); padding: 1rem; border-radius: var(--radius); margin: 1rem 0;">${message}</pre>
             <button onclick="location.reload()" class="retry-button">重试</button>
         </div>
     `;
+    articlesGrid.innerHTML = errorHTML;
     hideLoading();
 }
 

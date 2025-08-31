@@ -1,120 +1,113 @@
-# Polarsky's Dynamic Blog
+# Polarsky's Personal Blog
 
-一个能够自动发现和动态加载markdown文章的精美个人博客系统。
+一个精美的个人博客网站，支持动态加载Markdown文章，完全兼容GitHub Pages。
 
 ## ✨ 特性
 
-- 🚀 **动态文章加载**: 自动发现posts文件夹中的所有markdown文件
-- 🔄 **实时更新**: 自动检测新文章并更新列表
-- 🔍 **强大搜索**: 支持标题、内容、标签、分类搜索
-- 📱 **响应式设计**: 完美适配桌面和移动设备
-- 🎨 **现代化UI**: 精美的界面设计和流畅动画
-- 📝 **Markdown支持**: 完整的Markdown语法和代码高亮
-- 🏷️ **分类过滤**: 按分类和标签筛选文章
-- 📋 **自动目录**: 自动生成文章目录导航
+- � **动态文章加载**: 自动发现和加载posts文件夹中的Markdown文件
+- 🎨 **现代化设计**: 响应式布局，支持暗色/亮色主题切换
+- 🔍 **智能搜索**: 实时搜索文章标题和内容
+- 🏷️ **文章分类**: 支持标签过滤和分类浏览
+- 📱 **移动优化**: 完美适配各种设备屏幕
+- � **GitHub Pages**: 完全兼容GitHub Pages部署
+- � **动画效果**: 流畅的页面动画和交互效果
 
-## 🚀 快速开始
+## 🚀 本地开发
 
-### 方法一：使用Python API服务器（推荐）
+### 方法一：使用启动脚本（推荐）
+双击运行 `启动博客.bat` 文件，脚本会自动：
+- 检查Python环境
+- 启动HTTP服务器
+- 打开浏览器
 
-1. **启动API服务器**
+### 方法二：手动启动
 ```bash
-python api-server.py
-```
-
-2. **启动Web服务器**
-```bash
-# 在另一个终端窗口中运行
+# 在项目目录下运行
 python -m http.server 8000
+
+# 然后访问
+http://localhost:8000
 ```
 
-3. **访问博客**
-打开浏览器访问: http://localhost:8000
+⚠️ **重要**: 不要直接双击HTML文件，必须通过HTTP服务器访问才能正常工作。
 
-### 方法二：使用Node.js API服务器
-
-1. **安装依赖**
-```bash
-npm install
-```
-
-2. **启动API服务器**
-```bash
-npm start
-```
-
-3. **启动Web服务器**
-```bash
-# 在另一个终端窗口中运行
-npm run serve
-```
-
-### 方法三：仅静态文件（功能有限）
-
-如果不需要动态发现功能，可以直接启动Web服务器：
-
-```bash
-python -m http.server 8000
-```
-
-## 📝 添加文章
-
-1. **创建Markdown文件**
-   在 `posts/` 目录中创建新的 `.md` 文件
-
-2. **添加Front Matter**
-   在文件开头添加元数据：
-```markdown
----
-title: "文章标题"
-date: "2024-08-26"
-category: "分类名称"
-tags: ["标签1", "标签2"]
-description: "文章描述"
----
-
-# 文章内容开始...
-```
-
-3. **自动发现**
-   - 如果使用API服务器，文章会自动被发现
-   - 页面会在30秒内自动刷新显示新文章
-   - 也可以点击右下角的刷新按钮手动更新
-
-## 📁 目录结构
+##  项目结构
 
 ```
 Polarskyk.github.io/
-├── index.html              # 主页面
-├── article.html            # 文章详情页
-├── style.css               # 样式文件
-├── script.js               # 前端逻辑
-├── api-server.py           # Python API服务器
-├── server.js               # Node.js API服务器
-├── package.json            # Node.js配置
-├── posts/                  # 文章目录
-│   ├── welcome.md
-│   ├── javascript-es2024-features.md
-│   ├── css-grid-flexbox-comparison.md
-│   ├── react-18-concurrent-features.md
-│   └── ...
-└── api/                    # PHP API（可选）
-    └── get-posts.php
+├── index.html          # 主页
+├── article.html        # 文章详情页
+├── style.css           # 样式文件
+├── script.js           # 核心JavaScript
+├── 启动博客.bat         # 启动脚本
+├── posts/              # 文章目录
+│   ├── index.json      # 文章索引
+│   └── *.md            # Markdown文章
+└── README.md           # 说明文档
 ```
 
-## 🔧 配置说明
+## ✍️ 添加文章
 
-### API服务器配置
+1. 在 `posts/` 文件夹中创建新的 `.md` 文件
+2. 添加文章元信息（可选）：
 
-在 `script.js` 中可以修改以下配置：
+```markdown
+---
+title: "文章标题"
+date: "2024-01-01"
+tags: ["JavaScript", "前端"]
+description: "文章描述"
+---
 
-```javascript
-// API配置
-const API_BASE_URL = 'http://localhost:3001/api';  // API服务器地址
-const FALLBACK_MODE = true;  // 是否启用回退模式
+# 文章内容
+
+这里是正文...
 ```
 
-### 自动刷新间隔
+3. 博客会自动发现并加载新文章
+
+## 🌐 GitHub Pages部署
+
+1. 将项目上传到GitHub仓库
+2. 在仓库设置中启用GitHub Pages
+3. 选择主分支作为发布源
+4. 访问 `https://yourusername.github.io/repository-name`
+
+## 🎨 自定义主题
+
+编辑 `style.css` 中的CSS变量来自定义主题：
+
+```css
+:root {
+  --primary-color: #007acc;
+  --background-color: #ffffff;
+  --text-color: #333333;
+  /* 更多变量... */
+}
+```
+
+## � 响应式设计
+
+博客完全响应式，支持：
+- 桌面端 (1200px+)
+- 平板端 (768px-1199px)
+- 手机端 (<768px)
+
+## 🛠️ 技术栈
+
+- **前端**: HTML5, CSS3, Vanilla JavaScript
+- **Markdown解析**: marked.js
+- **代码高亮**: Prism.js
+- **图标**: 自定义SVG图标
+- **部署**: GitHub Pages
+
+## 📝 许可证
+
+MIT License
+
+---
+
+💖 **Polarsky's Blog** - 用心打造的个人博客系统
 
 ```javascript
 // 在setupAutoRefresh函数中修改间隔时间
