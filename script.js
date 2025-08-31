@@ -52,23 +52,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // 动态加载文章数据
 async function loadArticles() {
+    console.log('开始加载文章...');
+    console.log('当前路径:', window.location.pathname);
+    console.log('当前主机:', window.location.hostname);
+    
+    // 如果是本地开发环境，直接使用备选方案
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+        console.log('检测到本地环境，使用备选方案');
+        await loadArticlesFallback();
+        return;
+    }
+    
     try {
         // 尝试多种方法获取文章列表
+        console.log('尝试从GitHub API获取文件列表...');
         let filesList = await getFilesFromGitHub();
         
         if (!filesList || filesList.length === 0) {
+            console.log('GitHub API失败，尝试从本地索引文件获取...');
             // 尝试从本地索引文件获取
             filesList = await getFilesFromIndex();
         }
         
         if (!filesList || filesList.length === 0) {
+            console.log('索引文件失败，尝试直接发现文件...');
             // 尝试直接发现文件
             filesList = await discoverMarkdownFiles();
         }
         
         if (filesList && filesList.length > 0) {
+            console.log('找到文件列表，开始加载内容:', filesList);
             await loadArticlesFromList(filesList);
         } else {
+            console.log('所有方法都失败了，使用备选方案');
             throw new Error('无法获取文章列表');
         }
     } catch (error) {
