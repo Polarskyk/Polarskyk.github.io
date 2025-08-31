@@ -366,6 +366,7 @@
         async function loadArticle() {
             const urlParams = new URLSearchParams(window.location.search);
             const filename = urlParams.get('file');
+            const downloadUrl = urlParams.get('download_url');
 
             if (!filename) {
                 showError();
@@ -373,10 +374,18 @@
             }
 
             try {
-                const response = await fetch(`posts/${filename}`);
-                if (!response.ok) throw new Error('文章不存在');
-
-                const content = await response.text();
+                let content = '';
+                if (downloadUrl) {
+                    // 优先通过download_url加载（GitHub raw文件）
+                    const response = await fetch(downloadUrl);
+                    if (!response.ok) throw new Error('文章不存在');
+                    content = await response.text();
+                } else {
+                    // 本地加载
+                    const response = await fetch(`posts/${filename}`);
+                    if (!response.ok) throw new Error('文章不存在');
+                    content = await response.text();
+                }
                 const article = parseMarkdownFile(content, filename);
                 displayArticle(article);
             } catch (error) {

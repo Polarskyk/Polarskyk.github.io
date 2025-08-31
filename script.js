@@ -201,48 +201,7 @@ async function discoverMarkdownFiles() {
 }
 
 // 回退模式：使用预设的文件列表
-async function loadArticlesFallback() {
-    console.log('使用静态备选方案...');
-    
-    const knownFiles = [
-        'welcome.md',
-        'javascript-es2024-features.md',
-        'css-grid-flexbox-comparison.md',
-        'react-18-concurrent-features.md',
-        'blog-development-summary.md',
-        'css-modern-styling.md',
-        'css-modern-techniques.md',
-        'javascript-modern-practices.md',
-        'nodejs-performance-optimization.md',
-        'test-dynamic-loading.md'
-    ];
 
-    const promises = knownFiles.map(async (filename) => {
-        try {
-            const response = await fetch(`posts/${filename}`);
-            if (!response.ok) return null;
-            
-            const content = await response.text();
-            if (content && content.trim()) {
-                return parseMarkdownFile(content, filename);
-            }
-            return null;
-        } catch (error) {
-            return null;
-        }
-    });
-
-    const articles = await Promise.all(promises);
-    articlesData = articles.filter(article => article !== null);
-    filteredArticles = [...articlesData];
-    
-    // 按日期排序（最新的在前）
-    articlesData.sort((a, b) => new Date(b.date) - new Date(a.date));
-    filteredArticles = [...articlesData];
-    
-    renderArticles(filteredArticles);
-    console.log('备选方案加载了', articlesData.length, '篇文章');
-}
 
 // 设置自动刷新检查新文章（仅在支持的环境下）
 function setupAutoRefresh() {
@@ -348,8 +307,11 @@ function renderArticles(articles) {
         return;
     }
 
-    articlesGrid.innerHTML = articles.map(article => `
-        <article class="article-card" onclick="openArticle('${article.filename}')">
+    articlesGrid.innerHTML = articles.map(article => {
+        // 如果有downloadUrl，带上参数
+        const urlParam = article.downloadUrl ? `?file=${encodeURIComponent(article.filename)}&download_url=${encodeURIComponent(article.downloadUrl)}` : `?file=${encodeURIComponent(article.filename)}`;
+        return `
+        <article class="article-card" onclick="openArticle('${article.filename}', '${article.downloadUrl ? article.downloadUrl : ''}')">
             <div class="article-header">
                 <h3 class="article-title">${escapeHtml(article.title)}</h3>
                 <p class="article-description">${escapeHtml(article.description)}</p>
@@ -369,7 +331,7 @@ function renderArticles(articles) {
                 ` : ''}
             </div>
         </article>
-    `).join('');
+    `}).join('');
 }
 
 // 设置事件监听器
@@ -426,9 +388,12 @@ function handleCategoryFilter(e) {
 }
 
 // 打开文章详情
-function openArticle(filename) {
-    // 创建文章详情页面URL
-    const articleUrl = `article.html?file=${encodeURIComponent(filename)}`;
+function openArticle(filename, downloadUrl) {
+    // 创建文章详情页面URL，带上download_url参数（如有）
+    let articleUrl = `article.html?file=${encodeURIComponent(filename)}`;
+    if (downloadUrl) {
+        articleUrl += `&download_url=${encodeURIComponent(downloadUrl)}`;
+    }
     window.open(articleUrl, '_blank');
 }
 
