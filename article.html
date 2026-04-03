@@ -361,29 +361,66 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script>
+        // 路径配置管理 - 支持不同部署方式
+        const PathConfig = {
+            // 获取是否是GitHub Pages环境
+            isGitHubPages() {
+                return window.location.hostname.includes('github.io');
+            },
+            
+            // 获取是否是账户级仓库 (username.github.io)
+            isUserRepo() {
+                return window.location.hostname.match(/^[\w-]+\.github\.io$/) !== null;
+            },
+            
+            // 获取仓库名称
+            getRepoName() {
+                const pathname = window.location.pathname;
+                const pathParts = pathname.split('/').filter(p => p);
+                return pathParts.length > 0 ? pathParts[0] : '';
+            },
+            
+            // 获取基础路径前缀
+            getBasePath() {
+                if (!this.isGitHubPages()) {
+                    return './';
+                }
+                if (this.isUserRepo()) {
+                    return './';
+                }
+                const repoName = this.getRepoName();
+                return repoName ? `./${repoName}/` : './';
+            },
+            
+            // 获取posts文件夹路径
+            getPostsPath(filename = '') {
+                const basePath = this.getBasePath();
+                return filename ? `${basePath}posts/${filename}` : `${basePath}posts/`;
+            },
+            
+            // 获取资源路径（用于图片等）
+            getAssetPath(filepath) {
+                const basePath = this.getBasePath();
+                return filepath.startsWith('/') || filepath.startsWith('http') 
+                    ? filepath 
+                    : `${basePath}${filepath}`;
+            },
+            
+            // 获取HTML文件路径
+            getHtmlPath(filename) {
+                const basePath = this.getBasePath();
+                return `${basePath}${filename}`;
+            }
+        };
+
         // 获取正确的首页链接
         function getHomePageUrl() {
-            const hostname = window.location.hostname;
-            const pathname = window.location.pathname;
-            
-            // 如果是GitHub Pages环境
-            if (hostname.includes('github.io')) {
-                // 对于用户/组织仓库 (username.github.io)，直接在根目录
-                if (hostname.match(/^[\w-]+\.github\.io$/)) {
-                    return './index.html';
-                }
-                // 对于项目仓库 (username.github.io/project-name)
-                else {
-                    const pathParts = pathname.split('/').filter(p => p);
-                    if (pathParts.length > 0) {
-                        const repoName = pathParts[0];
-                        return `./${repoName}/index.html`;
-                    }
-                }
-            }
-            
-            // 本地开发环境或其他环境
-            return './index.html';
+            return PathConfig.getHtmlPath('index.html');
+        }
+
+        // 获取正确的posts路径
+        function getPostsPath(filename) {
+            return PathConfig.getPostsPath(filename);
         }
 
         // 页面初始化
@@ -456,31 +493,6 @@
                 console.error('加载文章失败:', error);
                 showError(`加载失败: ${error.message}`);
             }
-        }
-
-        // 获取正确的posts路径
-        function getPostsPath(filename) {
-            const hostname = window.location.hostname;
-            const pathname = window.location.pathname;
-            
-            // 检查是否是GitHub Pages环境
-            if (hostname.includes('github.io')) {
-                // 对于用户/组织仓库 (username.github.io)，直接在根目录
-                if (hostname.match(/^[\w-]+\.github\.io$/)) {
-                    return `./posts/${filename}`;
-                }
-                // 对于项目仓库 (username.github.io/project-name)
-                else {
-                    const pathParts = pathname.split('/').filter(p => p);
-                    if (pathParts.length > 0) {
-                        const repoName = pathParts[0];
-                        return `./${repoName}/posts/${filename}`;
-                    }
-                }
-            }
-            
-            // 本地开发环境或其他环境
-            return `./posts/${filename}`;
         }
 
         function parseMarkdownFile(content, filename) {
@@ -558,9 +570,15 @@
                 document.getElementById('article-tags').style.display = 'none';
             }
 
+            // 配置marked选项以处理图片路径
+            configureMarked();
+
             // 渲染Markdown内容
             const htmlContent = marked.parse(article.content);
             document.getElementById('article-content').innerHTML = htmlContent;
+
+            // 处理图片路径和优化
+            processArticleImages();
 
             // 生成目录
             generateTOC();
@@ -573,6 +591,154 @@
             // 显示文章，隐藏加载状态
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('article').classList.remove('hidden');
+        }
+
+        // 配置marked的渲染选项
+        function configureMarked() {
+            const renderer = new marked.Renderer();
+            
+            // 自定义图片渲染
+            renderer.image = function(token) {
+                let src = token.href;
+                
+                // 如果图片路径不是绝对URL，需要处理相对路径
+                if (!src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('/')) {
+                    // 获取正确的posts路径前缀
+                    const hostname = window.location.hostname;
+                    const pathname = window.location.pathname;
+                    let pathPrefix = '';
+                    
+                    if (hostname.includes('github.io')) {
+                        if (!hostname.match(/^[\w-]+\.github\.io$/)) {
+                            const pathParts = pathname.split('/').filter(p => p);
+                            if (pathParts.length > 0) {
+                                const repoName = pathParts[0];
+                                pathPrefix = `${repoName}/`;
+                            }
+                        }
+                    }
+                    
+                    // 图片通常和markdown文件在同一个posts文件夹
+                    src = `./posts/${src}`;
+                }
+                
+                const alt = token.text || 'Image';
+                const title = token.title ? ` title="${title}"` : '';
+                return `<img src="${src}" alt="${alt}"${title} />`;
+            };
+
+            // 自定义链接渲染，支持兼容性处理
+            renderer.link = function(token) {
+                let href = token.href;
+                
+                // 处理本地链接
+                if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('#')) {
+                    // 如果有仓库名，添加前缀
+                    const hostname = window.location.hostname;
+                    const pathname = window.location.pathname;
+                    
+                    if (hostname.includes('github.io') && !hostname.match(/^[\w-]+\.github\.io$/)) {
+                        const pathParts = pathname.split('/').filter(p => p);
+                        if (pathParts.length > 0) {
+                            const repoName = pathParts[0];
+                            href = `/${repoName}/${href}`;
+                        }
+                    }
+                }
+                
+                const title = token.title ? ` title="${token.title}"` : '';
+                return `<a href="${href}"${title}${token.target === '_blank' ? ' target="_blank" rel="noopener"' : ''}>${token.text}</a>`;
+            };
+
+            marked.setOptions({
+                renderer: renderer,
+                breaks: true,
+                gfm: true
+            });
+        }
+
+        // 处理文章中的所有图片
+        function processArticleImages() {
+            const images = document.querySelectorAll('#article-content img');
+            
+            images.forEach((img, index) => {
+                // 添加loading="lazy"支持浏览器原生懒加载
+                img.loading = 'lazy';
+                
+                // 添加图片加载错误处理
+                img.onerror = function() {
+                    console.warn(`图片加载失败: ${img.src}`);
+                    // 显示占位符或备用图片
+                    this.style.backgroundColor = '#f0f0f0';
+                    this.style.minHeight = '200px';
+                    this.title = '图片加载失败';
+                };
+                
+                // 添加点击放大功能
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function() {
+                    openImageViewer(this.src, this.alt);
+                });
+            });
+        }
+
+        // 图片查看器
+        function openImageViewer(src, alt) {
+            const viewer = document.createElement('div');
+            viewer.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = alt;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                border-radius: 8px;
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            `;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            const close = () => {
+                viewer.remove();
+            };
+            
+            closeBtn.addEventListener('click', close);
+            viewer.addEventListener('click', (e) => {
+                if (e.target === viewer) close();
+            });
+            
+            viewer.appendChild(img);
+            viewer.appendChild(closeBtn);
+            document.body.appendChild(viewer);
         }
 
         function generateTOC() {

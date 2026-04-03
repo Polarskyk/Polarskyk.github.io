@@ -11,6 +11,58 @@ const GITHUB_CONFIG = {
     postsPath: 'posts'
 };
 
+// 路径配置管理 - 支持不同部署方式
+const PathConfig = {
+    // 获取是否是GitHub Pages环境
+    isGitHubPages() {
+        return window.location.hostname.includes('github.io');
+    },
+    
+    // 获取是否是账户级仓库 (username.github.io)
+    isUserRepo() {
+        return window.location.hostname.match(/^[\w-]+\.github\.io$/) !== null;
+    },
+    
+    // 获取仓库名称
+    getRepoName() {
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        return pathParts.length > 0 ? pathParts[0] : '';
+    },
+    
+    // 获取基础路径前缀
+    getBasePath() {
+        if (!this.isGitHubPages()) {
+            return './';
+        }
+        if (this.isUserRepo()) {
+            return './';
+        }
+        const repoName = this.getRepoName();
+        return repoName ? `./${repoName}/` : './';
+    },
+    
+    // 获取posts文件夹路径
+    getPostsPath(filename = '') {
+        const basePath = this.getBasePath();
+        return filename ? `${basePath}posts/${filename}` : `${basePath}posts/`;
+    },
+    
+    // 获取资源路径（用于图片等）
+    getAssetPath(filepath) {
+        const basePath = this.getBasePath();
+        return filepath.startsWith('/') || filepath.startsWith('http') 
+            ? filepath 
+            : `${basePath}${filepath}`;
+    },
+    
+    // 获取HTML文件路径
+    getHtmlPath(filename) {
+        const basePath = this.getBasePath();
+        return `${basePath}${filename}`;
+    }
+};
+
 // DOM元素
 const articlesGrid = document.getElementById('articles-grid');
 const loading = document.getElementById('loading');
@@ -18,29 +70,9 @@ const searchInput = document.getElementById('search-input');
 const filterTabs = document.querySelectorAll('.filter-tab');
 const articleCountElement = document.getElementById('article-count');
 
-// 获取正确的posts路径
+// 获取正确的posts路径 - 使用新的配置系统
 function getPostsPath(filename = '') {
-    const hostname = window.location.hostname;
-    const pathname = window.location.pathname;
-    
-    // 检查是否是GitHub Pages环境
-    if (hostname.includes('github.io')) {
-        // 对于用户/组织仓库 (username.github.io)，直接在根目录
-        if (hostname.match(/^[\w-]+\.github\.io$/)) {
-            return filename ? `./posts/${filename}` : './posts/';
-        }
-        // 对于项目仓库 (username.github.io/project-name)
-        else {
-            const pathParts = pathname.split('/').filter(p => p);
-            if (pathParts.length > 0) {
-                const repoName = pathParts[0];
-                return filename ? `./${repoName}/posts/${filename}` : `./${repoName}/posts/`;
-            }
-        }
-    }
-    
-    // 本地开发环境或其他环境
-    return filename ? `./posts/${filename}` : './posts/';
+    return PathConfig.getPostsPath(filename);
 }
 
 // 初始化应用
@@ -491,23 +523,10 @@ function openArticleFromCard(cardElement) {
 // 打开文章详情
 function openArticle(filename, downloadUrl) {
     // 获取正确的article.html路径
-    let articleBasePath = './article.html';
-    
-    // 如果是GitHub Pages环境，需要处理路径
-    const hostname = window.location.hostname;
-    const pathname = window.location.pathname;
-    
-    if (hostname.includes('github.io') && !hostname.match(/^[\w-]+\.github\.io$/)) {
-        // 项目仓库需要包含仓库名路径
-        const pathParts = pathname.split('/').filter(p => p);
-        if (pathParts.length > 0) {
-            const repoName = pathParts[0];
-            articleBasePath = `./${repoName}/article.html`;
-        }
-    }
+    let articlePath = PathConfig.getHtmlPath('article.html');
     
     // 创建文章详情页面URL，带上download_url参数（如有）
-    let articleUrl = `${articleBasePath}?file=${encodeURIComponent(filename)}`;
+    let articleUrl = `${articlePath}?file=${encodeURIComponent(filename)}`;
     if (downloadUrl && downloadUrl.trim()) {
         articleUrl += `&download_url=${encodeURIComponent(downloadUrl)}`;
     }
