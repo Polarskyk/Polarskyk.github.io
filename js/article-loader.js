@@ -286,7 +286,6 @@ const ArticleLoader = {
         return {
             title: frontMatter.title || '无标题',
             date: frontMatter.date || '未知日期',
-            category: frontMatter.category || '未分类',
             tags: frontMatter.tags || [],
             description: description,
             filename: filename,
@@ -332,25 +331,7 @@ const ArticleLoader = {
             this.cache.filtered = this.cache.articles.filter(article => 
                 article.title.toLowerCase().includes(lowerQuery) ||
                 article.description.toLowerCase().includes(lowerQuery) ||
-                article.tags.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
-                article.category.toLowerCase().includes(lowerQuery)
-            );
-        }
-        return this.cache.filtered;
-    },
-    
-    /**
-     * 按分类筛选
-     * @param {string} category - 分类名
-     * @returns {Array} 筛选结果
-     */
-    filterByCategory(category) {
-        if (category === 'all') {
-            this.cache.filtered = [...this.cache.articles];
-        } else {
-            this.cache.filtered = this.cache.articles.filter(article => 
-                article.category.toLowerCase().includes(category.toLowerCase()) ||
-                article.tags.some(tag => tag.toLowerCase().includes(category.toLowerCase()))
+                article.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
             );
         }
         return this.cache.filtered;

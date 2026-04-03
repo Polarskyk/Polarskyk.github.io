@@ -7,7 +7,6 @@
 const articlesGrid = document.getElementById('articles-grid');
 const loading = document.getElementById('loading');
 const searchInput = document.getElementById('search-input');
-const filterTabs = document.querySelectorAll('.filter-tab');
 const articleCountElement = document.getElementById('article-count');
 
 // 初始化应用
@@ -75,7 +74,7 @@ function renderArticles(articles) {
         articlesGrid.innerHTML = `
             <div class="no-articles">
                 <h3>没有找到文章</h3>
-                <p>请尝试调整搜索条件或分类筛选</p>
+                <p>请尝试调整搜索条件</p>
             </div>
         `;
         return;
@@ -91,7 +90,6 @@ function renderArticles(articles) {
                     <span class="article-date">
                         📅 ${formatDate(article.date)}
                     </span>
-                    <span class="article-category">${escapeHtml(article.category)}</span>
                 </div>
                 <div class="article-meta">
                     <span>⏱️ ${article.readTime} 分钟阅读</span>
@@ -125,11 +123,6 @@ function setupEventListeners() {
     if (searchInput) {
         searchInput.addEventListener('input', debounce(handleSearch, APP_CONFIG.searchDebounceDelay));
     }
-    
-    // 分类筛选
-    filterTabs.forEach(tab => {
-        tab.addEventListener('click', handleCategoryFilter);
-    });
 }
 
 /**
@@ -139,28 +132,6 @@ function setupEventListeners() {
 function handleSearch(e) {
     const query = e.target.value;
     const results = ArticleLoader.search(query);
-    renderArticles(results);
-}
-
-/**
- * 分类筛选处理
- * @param {Event} e - 事件对象
- */
-function handleCategoryFilter(e) {
-    const category = e.target.dataset.category;
-    
-    // 更新激活状态
-    filterTabs.forEach(tab => tab.classList.remove('active'));
-    e.target.classList.add('active');
-    
-    // 筛选文章
-    const results = ArticleLoader.filterByCategory(category);
-    
-    // 清空搜索框
-    if (searchInput) {
-        searchInput.value = '';
-    }
-    
     renderArticles(results);
 }
 

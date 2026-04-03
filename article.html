@@ -588,7 +588,6 @@
             const article = {
                 title: frontMatter.title || '无标题',
                 date: frontMatter.date || '未知日期',
-                category: frontMatter.category || '未分类',
                 tags: Array.isArray(frontMatter.tags) ? frontMatter.tags : (frontMatter.tags ? [frontMatter.tags] : []),
                 description: frontMatter.description || '',
                 content: articleContent,
@@ -616,9 +615,6 @@
                 const metaHTML = `
                     <div class="article-meta-item">
                         📅 ${formatDate(article.date)}
-                    </div>
-                    <div class="article-meta-item">
-                        📁 ${article.category}
                     </div>
                     <div class="article-meta-item">
                         ⏱️ ${article.readTime} 分钟阅读
