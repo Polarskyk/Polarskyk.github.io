@@ -84,10 +84,24 @@ const MarkdownRenderer = {
      * @returns {string} HTML
      */
     renderCode(token) {
-        const lang = token.lang ? ` language-${token.lang}` : '';
-        const code = token.text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // 兼容不同版本的 marked.js
+        let code = '';
+        if (token.text) {
+            code = token.text;
+        } else if (typeof token === 'string') {
+            code = token;
+        } else {
+            console.warn('警告: renderCode 接收到无效的 token', token);
+            code = '';
+        }
         
-        return `<pre><code class="language-${token.lang || 'plaintext'}">${code}</code></pre>`;
+        // 防止 undefined 导致的错误
+        if (code && typeof code === 'string') {
+            code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        
+        const lang = (token.lang || 'plaintext').toString();
+        return `<pre><code class="language-${lang}">${code}</code></pre>`;
     },
     
     /**
@@ -115,10 +129,26 @@ const MarkdownRenderer = {
      * @returns {string} HTML
      */
     parse(content) {
-        // 在 parse 前处理视频语法
-        content = this.preprocessVideos(content);
+        // 防御性检查
+        if (!content || typeof content !== 'string') {
+            console.error('错误: 无效的 Markdown 内容', content);
+            return '<p>文章内容为空或无效</p>';
+        }
         
-        return marked.parse(content);
+        try {
+            // 预处理视频语法
+            content = this.preprocessVideos(content);
+            
+            // 防止空白内容
+            if (!content.trim()) {
+                return '<p>文章内容为空</p>';
+            }
+            
+            return marked.parse(content);
+        } catch (error) {
+            console.error('Markdown 解析错误:', error);
+            return `<p>文章渲染失败: ${error.message}</p>`;
+        }
     },
     
     /**
@@ -134,6 +164,11 @@ const MarkdownRenderer = {
      * @returns {string} 处理后的 Markdown 内容
      */
     preprocessVideos(content) {
+        // 防御性检查
+        if (!content || typeof content !== 'string') {
+            console.warn('警告: preprocessVideos 接收到无效的内容', content);
+            return '';
+        }
         // 处理本地视频: ![video](file.mp4) 或 @[video](file.mp4)
         content = content.replace(/(?:!\[video\]|\@\[video\])\(([^)]+)\)/g, (match, url) => {
             return this.createVideoHtml(url, 'local');
@@ -183,13 +218,37 @@ const MarkdownRenderer = {
      * @returns {string} HTML
      */
     createLocalVideo(url) {
-        // 处理相对路径
-        if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
-            url = PathConfig.getAssetPath(`posts/${url}`);
+        // 防御性检查
+        if (!url || typeof url !== 'string') {
+            console.warn('警告: 无效的视频 URL', url);
+            return '<p>视频 URL 无效</p>';
         }
         
-        const format = MediaHandler.getVideoFormat(url);
-        const mimeType = APP_CONFIG.videoFormats[format] || 'video/mp4';
+        // 处理相对路径
+        if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+            try {
+                url = PathConfig.getAssetPath(`posts/${url}`);
+            } catch (error) {
+                console.error('路径处理错误:', error);
+            }
+        }
+        
+        let format = 'mp4';
+        try {
+            if (typeof MediaHandler !== 'undefined' && MediaHandler.getVideoFormat) {
+                format = MediaHandler.getVideoFormat(url);
+            } else {
+                // 回退方案：自己检测格式
+                if (url.endsWith('.webm')) format = 'webm';
+                else if (url.endsWith('.ogg')) format = 'ogg';
+                else format = 'mp4';
+            }
+        } catch (error) {
+            console.warn('视频格式检测失败，使用默认 mp4:', error);
+            format = 'mp4';
+        }
+        
+        const mimeType = (APP_CONFIG && APP_CONFIG.videoFormats && APP_CONFIG.videoFormats[format]) || 'video/mp4';
         
         return `
             <div style="margin: 1.5rem 0; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md);">

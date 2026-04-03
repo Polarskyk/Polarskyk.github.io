@@ -480,6 +480,12 @@
         }
 
         function parseMarkdownFile(content, filename) {
+            // 防御性检查
+            if (!content || typeof content !== 'string') {
+                console.error('错误: 接收到无效的文章内容', content);
+                throw new Error('文章内容无效');
+            }
+            
             const lines = content.split('\n');
             let frontMatterEnd = -1;
             let frontMatter = {};
@@ -491,126 +497,170 @@
                         frontMatterEnd = i;
                         break;
                     }
-                    const match = lines[i].match(/^(\w+):\s*(.+)$/);
+                    const match = lines[i].match(/^([a-z]+):\s*(.+)$/i);
                     if (match) {
                         const [, key, value] = match;
-                        if (key === 'tags' && value.startsWith('[')) {
-                            frontMatter[key] = JSON.parse(value.replace(/"/g, '"'));
-                        } else {
-                            frontMatter[key] = value.replace(/['"]/g, '');
+                        try {
+                            if (key === 'tags' && value.trim().startsWith('[')) {
+                                // 尝试解析为 JSON 数组
+                                frontMatter[key] = JSON.parse(value.trim());
+                            } else if (key === 'tags') {
+                                // 处理逗号分隔的标签
+                                frontMatter[key] = value.split(',').map(t => t.trim());
+                            } else {
+                                // 移除引号
+                                frontMatter[key] = value.replace(/^['"]|['"]$/g, '').trim();
+                            }
+                        } catch (error) {
+                            console.warn(`Front Matter 解析警告 (${key}):`, error);
+                            frontMatter[key] = value.replace(/^['"]|['"]$/g, '').trim();
                         }
                     }
                 }
             }
 
-            const articleContent = lines.slice(frontMatterEnd + 1).join('\n');
+            // 获取文章内容（跳过 Front Matter）
+            const articleContent = frontMatterEnd >= 0 
+                ? lines.slice(frontMatterEnd + 1).join('\n').trim()
+                : content.trim();
+            
+            // 防止空内容
+            if (!articleContent) {
+                console.warn('警告: 文章内容为空');
+                throw new Error('文章内容为空');
+            }
+            
             const wordCount = articleContent.replace(/[^\u4e00-\u9fa5\w]/g, '').length;
             const readTime = Math.max(1, Math.ceil(wordCount / 300));
 
-            return {
+            const article = {
                 title: frontMatter.title || '无标题',
                 date: frontMatter.date || '未知日期',
                 category: frontMatter.category || '未分类',
-                tags: frontMatter.tags || [],
+                tags: Array.isArray(frontMatter.tags) ? frontMatter.tags : (frontMatter.tags ? [frontMatter.tags] : []),
                 description: frontMatter.description || '',
                 content: articleContent,
                 readTime: readTime
             };
+            
+            console.log('✓ Front Matter 解析成功:', article);
+            return article;
         }
 
         function displayArticle(article) {
-            // 更新页面标题
-            document.title = `${article.title} - Polarsky's Blog`;
-            document.getElementById('page-title').textContent = `${article.title} - Polarsky's Blog`;
-
-            // 填充文章信息
-            document.getElementById('article-title').textContent = article.title;
-            
-            const metaHTML = `
-                <div class="article-meta-item">
-                    📅 ${formatDate(article.date)}
-                </div>
-                <div class="article-meta-item">
-                    📁 ${article.category}
-                </div>
-                <div class="article-meta-item">
-                    ⏱️ ${article.readTime} 分钟阅读
-                </div>
-            `;
-            document.getElementById('article-meta').innerHTML = metaHTML;
-
-            if (article.description) {
-                document.getElementById('article-description').textContent = article.description;
-            } else {
-                document.getElementById('article-description').style.display = 'none';
-            }
-
-            if (article.tags && article.tags.length > 0) {
-                const tagsHTML = article.tags.map(tag => 
-                    `<span class="article-tag"># ${escapeHtml(tag)}</span>`
-                ).join('');
-                document.getElementById('article-tags').innerHTML = tagsHTML;
-            } else {
-                document.getElementById('article-tags').style.display = 'none';
-            }
-
             try {
-                // 配置 Markdown 渲染器（支持视频）
-                if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.configure) {
-                    MarkdownRenderer.configure();
-                    console.log('✓ Markdown 渲染器已配置');
-                } else {
-                    console.warn('⚠ Markdown 渲染器未加载，使用 marked.js 默认配置');
+                // 防御性检查
+                if (!article || typeof article !== 'object') {
+                    throw new Error('无效的文章对象');
                 }
 
-                // 渲染 Markdown 内容（支持视频）
-                let htmlContent;
-                if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.parse) {
-                    htmlContent = MarkdownRenderer.parse(article.content);
-                    console.log('✓ 使用 MarkdownRenderer 渲染');
-                } else {
-                    // 回退到 marked
-                    htmlContent = marked.parse(article.content);
-                    console.log('✓ 使用 marked 默认渲染');
-                }
+                // 更新页面标题
+                document.title = `${article.title} - Polarsky's Blog`;
+                document.getElementById('page-title').textContent = `${article.title} - Polarsky's Blog`;
+
+                // 填充文章信息
+                document.getElementById('article-title').textContent = article.title || '无标题';
                 
-                document.getElementById('article-content').innerHTML = htmlContent;
+                const metaHTML = `
+                    <div class="article-meta-item">
+                        📅 ${formatDate(article.date)}
+                    </div>
+                    <div class="article-meta-item">
+                        📁 ${article.category}
+                    </div>
+                    <div class="article-meta-item">
+                        ⏱️ ${article.readTime} 分钟阅读
+                    </div>
+                `;
+                document.getElementById('article-meta').innerHTML = metaHTML;
 
-                // 获取文章内容容器
-                const contentContainer = document.getElementById('article-content');
-
-                // 处理图片
-                if (typeof MediaHandler !== 'undefined' && MediaHandler.processImages) {
-                    MediaHandler.processImages(contentContainer);
-                    console.log('✓ 图片已处理');
+                if (article.description) {
+                    document.getElementById('article-description').textContent = article.description;
                 } else {
-                    console.warn('⚠ 媒体处理器未加载');
+                    document.getElementById('article-description').style.display = 'none';
                 }
 
-                // 处理视频
-                if (typeof MediaHandler !== 'undefined' && MediaHandler.processVideos) {
-                    MediaHandler.processVideos(contentContainer);
-                    console.log('✓ 视频已处理');
+                if (article.tags && article.tags.length > 0) {
+                    const tagsHTML = article.tags.map(tag => 
+                        `<span class="article-tag"># ${escapeHtml(String(tag))}</span>`
+                    ).join('');
+                    document.getElementById('article-tags').innerHTML = tagsHTML;
                 } else {
-                    console.warn('⚠ 视频处理失败');
+                    document.getElementById('article-tags').style.display = 'none';
                 }
 
-                // 生成目录
-                generateTOC();
+                try {
+                    // 配置 Markdown 渲染器（支持视频）
+                    if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.configure) {
+                        MarkdownRenderer.configure();
+                        console.log('✓ Markdown 渲染器已配置');
+                    } else {
+                        console.warn('⚠ Markdown 渲染器未加载，使用 marked.js 默认配置');
+                    }
 
-                // 代码高亮
-                if (typeof Prism !== 'undefined') {
-                    Prism.highlightAll();
-                    console.log('✓ 代码已高亮');
+                    // 确保内容有效
+                    if (!article.content || typeof article.content !== 'string') {
+                        throw new Error('文章内容无效');
+                    }
+
+                    // 渲染 Markdown 内容（支持视频）
+                    let htmlContent;
+                    if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.parse) {
+                        htmlContent = MarkdownRenderer.parse(article.content);
+                        console.log('✓ 使用 MarkdownRenderer 渲染');
+                    } else if (typeof marked !== 'undefined') {
+                        htmlContent = marked.parse(article.content);
+                        console.log('✓ 使用 marked 默认渲染');
+                    } else {
+                        throw new Error('没有可用的 Markdown 渲染器');
+                    }
+                    
+                    if (!htmlContent || typeof htmlContent !== 'string') {
+                        throw new Error('Markdown 渲染返回无效内容');
+                    }
+                    
+                    document.getElementById('article-content').innerHTML = htmlContent;
+
+                    // 获取文章内容容器
+                    const contentContainer = document.getElementById('article-content');
+
+                    // 处理图片
+                    if (typeof MediaHandler !== 'undefined' && MediaHandler.processImages) {
+                        MediaHandler.processImages(contentContainer);
+                        console.log('✓ 图片已处理');
+                    } else {
+                        console.warn('⚠ 媒体处理器未加载');
+                    }
+
+                    // 处理视频
+                    if (typeof MediaHandler !== 'undefined' && MediaHandler.processVideos) {
+                        MediaHandler.processVideos(contentContainer);
+                        console.log('✓ 视频已处理');
+                    } else {
+                        console.warn('⚠ 视频处理失败');
+                    }
+
+                    // 生成目录
+                    generateTOC();
+
+                    // 代码高亮
+                    if (typeof Prism !== 'undefined') {
+                        Prism.highlightAll();
+                        console.log('✓ 代码已高亮');
+                    }
+
+                    // 显示文章，隐藏加载状态
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('article').classList.remove('hidden');
+                    console.log('✓ 文章加载完成');
+                    
+                } catch (renderError) {
+                    console.error('渲染文章失败:', renderError);
+                    throw renderError;
                 }
-
-                // 显示文章，隐藏加载状态
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('article').classList.remove('hidden');
-                console.log('✓ 文章加载完成');
                 
             } catch (error) {
-                console.error('渲染文章失败:', error);
+                console.error('显示文章失败:', error);
                 showError(`渲染文章失败: ${error.message}`);
             }
         }

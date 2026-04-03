@@ -232,8 +232,20 @@ const MediaHandler = {
      * @returns {string} 视频格式 (mp4, webm, ogg 等)
      */
     getVideoFormat(url) {
-        const ext = url.split('.').pop().toLowerCase();
-        return ext || 'mp4';
+        if (!url || typeof url !== 'string') {
+            console.warn('警告: 无效的视频 URL', url);
+            return 'mp4'; // 默认返回 mp4
+        }
+        
+        try {
+            const ext = url.toLowerCase().split('.').pop() || 'mp4';
+            // 只返回有效的视频格式
+            const validFormats = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv'];
+            return validFormats.includes(ext) ? ext : 'mp4';
+        } catch (error) {
+            console.warn('获取视频格式失败，使用默认 mp4:', error);
+            return 'mp4';
+        }
     }
 };
 
