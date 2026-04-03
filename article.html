@@ -367,16 +367,43 @@
     <script src="js/article-loader.js"></script>
     
     <script>
-        // 等待所有模块加载完毕
-        window.addEventListener('load', () => {
-            // 验证模块是否已加载
+        // 立即检查模块加载状态（在脚本加载后立即执行）
+        console.log('📋 检查模块加载状态...');
+        console.log('PathConfig:', typeof window.PathConfig);
+        console.log('MarkdownRenderer:', typeof window.MarkdownRenderer);
+        console.log('MediaHandler:', typeof window.MediaHandler);
+        console.log('APP_CONFIG:', typeof window.APP_CONFIG);
+        
+        // 启用调试标志，以便在发生问题时记录
+        window.DEBUG_MODULES = true;
+        
+        // 等待所有模块加载完毕（使用 DOMContentLoaded）
+        document.addEventListener('DOMContentLoaded', () => {
+            // 最后一次验证模块是否已加载
             const requiredModules = ['PathConfig', 'MarkdownRenderer', 'MediaHandler', 'APP_CONFIG'];
             const missingModules = requiredModules.filter(m => typeof window[m] === 'undefined');
             
+            console.log('📋 DOMContentLoaded 时模块检查:');
+            requiredModules.forEach(m => {
+                console.log(`  - ${m}: ${typeof window[m]}`);
+            });
+            
             if (missingModules.length > 0) {
+                console.error('❌ 缺失的模块:', missingModules);
                 showError(`模块加载失败: ${missingModules.join(', ')}`);
-                console.error('缺失的模块:', missingModules);
                 return;
+            }
+            
+            console.log('✓ 所有 4 个模块已成功加载');
+        });
+        
+        // 也在 window load 事件时检查（备用方案）
+        window.addEventListener('load', () => {
+            const requiredModules = ['PathConfig', 'MarkdownRenderer', 'MediaHandler', 'APP_CONFIG'];
+            const missingModules = requiredModules.filter(m => typeof window[m] === 'undefined');
+            
+            if (missingModules.length > 0 && window.DEBUG_MODULES) {
+                console.warn('⚠ Load 事件时仍有缺失的模块:', missingModules);
             }
         });
 
@@ -415,6 +442,31 @@
         });
 
         async function loadArticle() {
+            // 首先验证所有必要的模块已加载
+            const requiredModules = {
+                'PathConfig': typeof window.PathConfig,
+                'MarkdownRenderer': typeof window.MarkdownRenderer,
+                'MediaHandler': typeof window.MediaHandler,
+                'APP_CONFIG': typeof window.APP_CONFIG
+            };
+
+            console.log('🔍 loadArticle() 开始: 验证模块加载状态');
+            Object.entries(requiredModules).forEach(([name, type]) => {
+                console.log(`  ${name}: ${type}`);
+            });
+
+            const missingModules = Object.entries(requiredModules)
+                .filter(([_, type]) => type === 'undefined')
+                .map(([name, _]) => name);
+
+            if (missingModules.length > 0) {
+                showError(`模块加载失败: ${missingModules.join(', ')}\n\n请访问 script-diagnostics.html 进行诊断`);
+                console.error('❌ 缺失的模块:', missingModules);
+                return;
+            }
+
+            console.log('✓ 所有模块已加载');
+
             const urlParams = new URLSearchParams(window.location.search);
             const filename = urlParams.get('file');
             const downloadUrl = urlParams.get('download_url');

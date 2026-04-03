@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脚本加载诊断 - Polarsky's Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .diagnostic-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            font-family: 'Courier New', monospace;
+        }
+
+        .diagnostic-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--background-color);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .log-item {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border-left: 3px solid #555;
+        }
+
+        .log-item.success {
+            border-left-color: #22c55e;
+            color: #22c55e;
+        }
+
+        .log-item.error {
+            border-left-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .log-item.warning {
+            border-left-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .log-item.info {
+            border-left-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .diagnostic-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .diagnostic-result.all-good {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 2px solid #22c55e;
+        }
+
+        .diagnostic-result.has-issues {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 2px solid #ef4444;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-top: 1rem;
+            color: #d4d4d4;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <h1>🔬 脚本加载诊断工具</h1>
+        
+        <div id="diagnostics"></div>
+        
+        <a href="article.html?file=1.md" class="back-button">返回文章页面</a>
+        <a href="index.html" class="back-button">返回首页</a>
+    </div>
+
+    <!-- 加载所有模块脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/media-handler.js"></script>
+    <script src="js/markdown-renderer.js"></script>
+    <script src="js/article-loader.js"></script>
+
+    <script>
+        // 诊断工具类
+        class Diagnostic {
+            constructor() {
+                this.logs = [];
+                this.issues = [];
+                this.results = {
+                    modules: {},
+                    functions: {},
+                    config: {}
+                };
+            }
+
+            addLog(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                this.logs.push({ message, type, timestamp });
+                console.log(`[${type.toUpperCase()}] ${message}`);
+            }
+
+            addIssue(severity, message) {
+                this.issues.push({ severity, message });
+            }
+
+            checkModule(name) {
+                const exists = typeof window[name] !== 'undefined';
+                this.results.modules[name] = exists;
+                const status = exists ? 'success' : 'error';
+                this.addLog(`检查模块 ${name}: ${exists ? '✓ 已加载' : '✗ 未加载'}`, status);
+                
+                if (!exists) {
+                    this.addIssue('critical', `模块 ${name} 未加载`);
+                }
+                
+                return exists;
+            }
+
+            checkFunction(moduleName, functionName) {
+                const module = window[moduleName];
+                if (!module) {
+                    this.addLog(`无法检查 ${moduleName}.${functionName}：模块不存在`, 'error');
+                    return false;
+                }
+
+                const exists = typeof module[functionName] === 'function';
+                this.results.functions[`${moduleName}.${functionName}`] = exists;
+                const status = exists ? 'success' : 'error';
+                this.addLog(`检查函数 ${moduleName}.${functionName}: ${exists ? '✓' : '✗'}`, status);
+                
+                return exists;
+            }
+
+            checkConfig(configName) {
+                const config = window[configName];
+                if (!config) {
+                    this.addLog(`配置 ${configName} 不存在`, 'error');
+                    return false;
+                }
+
+                const isObject = typeof config === 'object';
+                this.results.config[configName] = {
+                    exists: true,
+                    isObject,
+                    keys: isObject ? Object.keys(config).length : 0
+                };
+                
+                const status = isObject ? 'success' : 'warning';
+                this.addLog(
+                    `配置 ${configName}: ${isObject ? '✓' : '⚠'} (${isObject ? Object.keys(config).length + ' 个属性' : '不是对象'})`,
+                    status
+                );
+                
+                return isObject;
+            }
+
+            render() {
+                const container = document.getElementById('diagnostics');
+                
+                // 清空容器
+                container.innerHTML = '';
+
+                // 添加诊断信息
+                container.innerHTML += this.renderSection('模块检查', this.logs.filter(l => l.type !== 'warning'));
+                container.innerHTML += this.renderSection('配置项详情', this.renderConfigDetails());
+                container.innerHTML += this.renderSection('问题汇总', this.renderIssues());
+                container.innerHTML += this.renderResult();
+            }
+
+            renderSection(title, content) {
+                return `
+                    <div class="diagnostic-section">
+                        <div class="section-title">${title}</div>
+                        ${Array.isArray(content) ? content.map(item => this.renderLogItem(item)).join('') : content}
+                    </div>
+                `;
+            }
+
+            renderLogItem(item) {
+                return `<div class="log-item ${item.type}">[${item.timestamp}] ${item.message}</div>`;
+            }
+
+            renderConfigDetails() {
+                let html = '';
+                
+                if (window.APP_CONFIG) {
+                    html += `<div class="log-item success">
+                        ✓ APP_CONFIG 包含 ${Object.keys(window.APP_CONFIG).length} 个属性:
+                        ${Object.keys(window.APP_CONFIG).slice(0, 5).join(', ')}${Object.keys(window.APP_CONFIG).length > 5 ? '...' : ''}
+                    </div>`;
+                }
+
+                if (window.PathConfig && typeof window.PathConfig.getBasePath === 'function') {
+                    const basePath = window.PathConfig.getBasePath();
+                    html += `<div class="log-item success">
+                        ✓ PathConfig.getBasePath() = "${basePath}"
+                    </div>`;
+                }
+
+                if (window.PathConfig && typeof window.PathConfig.getPostsPath === 'function') {
+                    const postsPath = window.PathConfig.getPostsPath();
+                    html += `<div class="log-item success">
+                        ✓ PathConfig.getPostsPath() = "${postsPath}"
+                    </div>`;
+                }
+
+                if (window.MediaHandler && typeof window.MediaHandler.getVideoFormat === 'function') {
+                    const format = window.MediaHandler.getVideoFormat('test.mp4');
+                    html += `<div class="log-item success">
+                        ✓ MediaHandler.getVideoFormat('test.mp4') = "${format}"
+                    </div>`;
+                }
+
+                if (!html) {
+                    html = '<div class="log-item warning">⚠ 无配置详情</div>';
+                }
+
+                return html;
+            }
+
+            renderIssues() {
+                if (this.issues.length === 0) {
+                    return '<div class="log-item success">✓ 未发现问题</div>';
+                }
+
+                return this.issues.map(issue => {
+                    const type = issue.severity === 'critical' ? 'error' : 'warning';
+                    return `<div class="log-item ${type}">[${issue.severity.toUpperCase()}] ${issue.message}</div>`;
+                }).join('');
+            }
+
+            renderResult() {
+                const allModulesLoaded = Object.values(this.results.modules).every(v => v);
+                const className = allModulesLoaded ? 'all-good' : 'has-issues';
+                const message = allModulesLoaded 
+                    ? '✓ 所有模块已成功加载！' 
+                    : `✗ 有 ${this.issues.length} 个问题需要解决`;
+
+                return `
+                    <div class="diagnostic-result ${className}">
+                        <div style="font-size: 1.5rem; margin-bottom: 1rem;">${message}</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">
+                            已加载: ${Object.values(this.results.modules).filter(v => v).length}/4 个模块
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 运行诊断
+        window.addEventListener('load', () => {
+            const diagnostic = new Diagnostic();
+
+            diagnostic.addLog('开始诊断...', 'info');
+            diagnostic.addLog('', 'info');
+
+            // 检查模块
+            diagnostic.addLog('=== 检查核心模块 ===', 'info');
+            diagnostic.checkModule('PathConfig');
+            diagnostic.checkModule('MarkdownRenderer');
+            diagnostic.checkModule('MediaHandler');
+            diagnostic.checkModule('APP_CONFIG');
+            diagnostic.addLog('', 'info');
+
+            // 检查函数
+            diagnostic.addLog('=== 检查关键函数 ===', 'info');
+            diagnostic.checkFunction('PathConfig', 'getBasePath');
+            diagnostic.checkFunction('PathConfig', 'getPostsPath');
+            diagnostic.checkFunction('MarkdownRenderer', 'parse');
+            diagnostic.checkFunction('MarkdownRenderer', 'configure');
+            diagnostic.checkFunction('MediaHandler', 'processImages');
+            diagnostic.checkFunction('MediaHandler', 'getVideoFormat');
+            diagnostic.addLog('', 'info');
+
+            // 检查配置
+            diagnostic.addLog('=== 检查配置对象 ===', 'info');
+            diagnostic.checkConfig('APP_CONFIG');
+            diagnostic.addLog('', 'info');
+
+            // 检查 marked 和 Prism
+            diagnostic.addLog('=== 检查外部库 ===', 'info');
+            diagnostic.checkModule('marked');
+            diagnostic.checkModule('Prism');
+            diagnostic.addLog('', 'info');
+
+            diagnostic.addLog('诊断完成', 'info');
+
+            // 渲染结果
+            diagnostic.render();
+        });
+    </script>
+</body>
+</html>
