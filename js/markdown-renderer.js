@@ -337,3 +337,9 @@ const MarkdownRenderer = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MarkdownRenderer };
 }
+
+// 暴露到全局作用域（浏览器环境）
+if (typeof window !== 'undefined') {
+    window.MarkdownRenderer = MarkdownRenderer;
+    console.log('✓ Markdown 渲染模块已加载到全局作用域');
+}

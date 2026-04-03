@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块加载测试 - Polarsky's Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface-color);
+            border-radius: var(--radius);
+        }
+
+        .test-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-left: 4px solid var(--border-color);
+            background: var(--background-color);
+            border-radius: 4px;
+        }
+
+        .test-item.success {
+            border-left-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .test-item.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .test-item.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .test-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-left: 1rem;
+        }
+
+        .test-status.success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .test-status.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .test-status.warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .test-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
+
+        .test-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: var(--radius);
+            background: var(--surface-color);
+            text-align: center;
+        }
+
+        .test-summary.all-pass {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .test-summary.some-fail {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 模块加载测试</h1>
+        
+        <div id="test-results"></div>
+        
+        <div class="test-summary" id="test-summary" style="display: none;">
+            <p id="summary-text"></p>
+        </div>
+
+        <a href="index.html" class="back-button">返回首页</a>
+    </div>
+
+    <!-- 加载所有模块 -->
+    <script src="js/config.js"></script>
+    <script src="js/media-handler.js"></script>
+    <script src="js/markdown-renderer.js"></script>
+    <script src="js/article-loader.js"></script>
+
+    <script>
+        // 测试结果数组
+        const tests = [];
+
+        // 定义测试项
+        const testsToRun = [
+            {
+                name: 'PathConfig 模块',
+                key: 'PathConfig',
+                check: () => typeof window.PathConfig !== 'undefined'
+            },
+            {
+                name: 'MarkdownRenderer 模块',
+                key: 'MarkdownRenderer',
+                check: () => typeof window.MarkdownRenderer !== 'undefined'
+            },
+            {
+                name: 'MediaHandler 模块',
+                key: 'MediaHandler',
+                check: () => typeof window.MediaHandler !== 'undefined'
+            },
+            {
+                name: 'APP_CONFIG 配置',
+                key: 'APP_CONFIG',
+                check: () => typeof window.APP_CONFIG !== 'undefined'
+            },
+            {
+                name: 'PathConfig.getBasePath() 函数',
+                key: 'getBasePath',
+                check: () => typeof window.PathConfig?.getBasePath === 'function'
+            },
+            {
+                name: 'PathConfig.getPostsPath() 函数',
+                key: 'getPostsPath',
+                check: () => typeof window.PathConfig?.getPostsPath === 'function'
+            },
+            {
+                name: 'MarkdownRenderer.parse() 函数',
+                key: 'parse',
+                check: () => typeof window.MarkdownRenderer?.parse === 'function'
+            },
+            {
+                name: 'MediaHandler.processImages() 函数',
+                key: 'processImages',
+                check: () => typeof window.MediaHandler?.processImages === 'function'
+            },
+            {
+                name: 'MediaHandler.getVideoFormat() 函数',
+                key: 'getVideoFormat',
+                check: () => typeof window.MediaHandler?.getVideoFormat === 'function'
+            }
+        ];
+
+        // 运行测试
+        function runTests() {
+            let passed = 0;
+            let failed = 0;
+            let warnings = 0;
+
+            const resultsContainer = document.getElementById('test-results');
+            resultsContainer.innerHTML = '';
+
+            testsToRun.forEach(test => {
+                let result = 'success';
+                let message = '✓ 已加载';
+                let details = '';
+
+                try {
+                    const isAvailable = test.check();
+                    if (!isAvailable) {
+                        result = 'error';
+                        message = '✗ 未加载';
+                        failed++;
+                    } else {
+                        passed++;
+                        // 获取更多详情
+                        if (test.key === 'APP_CONFIG') {
+                            details = `包含 ${Object.keys(window.APP_CONFIG).length} 个配置项`;
+                        } else if (test.key === 'getBasePath') {
+                            details = `基础路径: ${window.PathConfig.getBasePath()}`;
+                        }
+                    }
+                } catch (error) {
+                    result = 'error';
+                    message = '✗ 错误';
+                    details = error.message;
+                    failed++;
+                }
+
+                const testElement = document.createElement('div');
+                testElement.className = `test-item ${result}`;
+                testElement.innerHTML = `
+                    <div class="test-label">
+                        ${test.name}
+                        <span class="test-status ${result}">${message}</span>
+                    </div>
+                    ${details ? `<div class="test-details">${details}</div>` : ''}
+                `;
+                resultsContainer.appendChild(testElement);
+            });
+
+            // 显示总结
+            const summary = document.getElementById('test-summary');
+            const summaryText = document.getElementById('summary-text');
+            const total = testsToRun.length;
+
+            if (failed === 0) {
+                summary.className = 'test-summary all-pass';
+                summaryText.innerHTML = `
+                    <strong>✓ 所有模块加载成功！</strong><br>
+                    ${passed}/${total} 个测试通过
+                `;
+            } else {
+                summary.className = 'test-summary some-fail';
+                summaryText.innerHTML = `
+                    <strong>✗ 部分模块加载失败</strong><br>
+                    ${passed}/${total} 个测试通过，${failed} 个失败
+                `;
+            }
+            summary.style.display = 'block';
+
+            // 在控制台中输出结果
+            console.clear();
+            console.group('📊 模块加载测试结果');
+            console.log(`总计: ${total} 个测试`);
+            console.log(`成功: ${passed} 个 ✓`);
+            console.log(`失败: ${failed} 个 ✗`);
+            console.groupEnd();
+        }
+
+        // 页面加载完毕后运行测试
+        window.addEventListener('load', runTests);
+
+        // 也在 DOMContentLoaded 时检查一次
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📋 检查全局对象...');
+            console.log('PathConfig:', typeof window.PathConfig);
+            console.log('MarkdownRenderer:', typeof window.MarkdownRenderer);
+            console.log('MediaHandler:', typeof window.MediaHandler);
+            console.log('APP_CONFIG:', typeof window.APP_CONFIG);
+        });
+    </script>
+</body>
+</html>

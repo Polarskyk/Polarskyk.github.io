@@ -124,3 +124,11 @@ const PathConfig = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { GITHUB_CONFIG, APP_CONFIG, PathConfig };
 }
+
+// 暴露到全局作用域（浏览器环境）
+if (typeof window !== 'undefined') {
+    window.GITHUB_CONFIG = GITHUB_CONFIG;
+    window.APP_CONFIG = APP_CONFIG;
+    window.PathConfig = PathConfig;
+    console.log('✓ 配置模块已加载到全局作用域');
+}

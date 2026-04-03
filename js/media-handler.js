@@ -249,6 +249,12 @@ const MediaHandler = {
     }
 };
 
+// 暴露到全局作用域（浏览器环境）
+if (typeof window !== 'undefined') {
+    window.MediaHandler = MediaHandler;
+    console.log('✓ 媒体处理模块已加载到全局作用域');
+}
+
 // 导出 MediaHandler
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MediaHandler };
