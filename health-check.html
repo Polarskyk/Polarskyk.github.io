@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统健康检查 - Polarsky's Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2563eb;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .status-card {
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #6ee7b7;
+        }
+
+        .status-card.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 2px solid #fca5a5;
+        }
+
+        .status-card.warning {
+            background: #fef3c7;
+            color: #78350f;
+            border: 2px solid #fcd34d;
+        }
+
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-section {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-section h3 {
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .value {
+            color: #2563eb;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .summary {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+        }
+
+        .summary.error {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+        }
+
+        .summary.success {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .module-details {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .module-details pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 0.75rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 系统健康检查</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            此页面检查所有模块、脚本和路径配置是否正确加载
+        </p>
+
+        <div class="status-grid" id="statusGrid">
+            <!-- 状态卡片将通过 JavaScript 动态生成 -->
+        </div>
+
+        <div class="info-section" id="infoSection">
+            <!-- 环境信息将通过 JavaScript 显示 -->
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="runDiagnostic()">🔍 运行完整诊断</button>
+            <button class="btn-secondary" onclick="location.href='index.html'">返回首页</button>
+        </div>
+
+        <div id="summary" style="display: none;"></div>
+
+        <div class="footer">
+            <p>💡 如果发现问题，请查看 <a href="TROUBLESHOOTING.md" style="color: #2563eb; text-decoration: none;">TROUBLESHOOTING.md</a> 获取帮助</p>
+        </div>
+    </div>
+
+    <!-- 加载所有模块脚本待加载 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/media-handler.js"></script>
+    <script src="js/markdown-renderer.js"></script>
+    <script src="js/article-loader.js"></script>
+
+    <script>
+        // 检查项定义
+        const checks = [
+            {
+                name: 'PathConfig',
+                test: () => typeof PathConfig !== 'undefined',
+                type: 'module'
+            },
+            {
+                name: 'GITHUB_CONFIG',
+                test: () => typeof GITHUB_CONFIG !== 'undefined',
+                type: 'config'
+            },
+            {
+                name: 'APP_CONFIG',
+                test: () => typeof APP_CONFIG !== 'undefined',
+                type: 'config'
+            },
+            {
+                name: 'MarkdownRenderer',
+                test: () => typeof MarkdownRenderer !== 'undefined',
+                type: 'module'
+            },
+            {
+                name: 'MediaHandler',
+                test: () => typeof MediaHandler !== 'undefined',
+                type: 'module'
+            },
+            {
+                name: 'ArticleLoader',
+                test: () => typeof ArticleLoader !== 'undefined',
+                type: 'module'
+            },
+            {
+                name: 'marked.js',
+                test: () => typeof marked !== 'undefined',
+                type: 'library'
+            },
+            {
+                name: 'Prism.js',
+                test: () => typeof Prism !== 'undefined',
+                type: 'library'
+            }
+        ];
+
+        // 实时检查函数
+        function updateChecks() {
+            const grid = document.getElementById('statusGrid');
+            grid.innerHTML = '';
+
+            let successCount = 0;
+            const totalCount = checks.length;
+
+            checks.forEach(check => {
+                const result = check.test();
+                const card = document.createElement('div');
+                card.className = `status-card ${result ? 'success' : 'error'}`;
+
+                const icon = result ? '✓' : '✗';
+                const status = result ? '正常' : '异常';
+
+                card.innerHTML = `
+                    <div class="status-icon">${icon}</div>
+                    <div>${check.name}</div>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">${status}</div>
+                `;
+
+                grid.appendChild(card);
+
+                if (result) successCount++;
+            });
+
+            // 更新信息面板
+            updateInfo();
+
+            // 更新总结
+            displaySummary(successCount, totalCount);
+        }
+
+        // 显示环境信息
+        function updateInfo() {
+            const info = document.getElementById('infoSection');
+            const basePath = typeof PathConfig !== 'undefined' 
+                ? PathConfig.getBasePath() 
+                : 'N/A';
+
+            const postsPath = typeof PathConfig !== 'undefined' 
+                ? PathConfig.getPostsPath('') 
+                : 'N/A';
+
+            info.innerHTML = `
+                <h3>📍 环境信息</h3>
+                <div class="info-item">
+                    <span class="label">当前 URL:</span>
+                    <span class="value">${window.location.href}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Protocol:</span>
+                    <span class="value">${window.location.protocol}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Hostname:</span>
+                    <span class="value">${window.location.hostname}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Base Path:</span>
+                    <span class="value">${basePath}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Posts Path:</span>
+                    <span class="value">${postsPath}</span>
+                </div>
+                ${typeof PathConfig !== 'undefined' ? `
+                <div class="info-item">
+                    <span class="label">是否 GitHub Pages:</span>
+                    <span class="value">${PathConfig.isGitHubPages() ? '是' : '否'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">GitHub 仓库:</span>
+                    <span class="value">${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}</span>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // 显示总结
+        function displaySummary(successCount, totalCount) {
+            const summary = document.getElementById('summary');
+            const allSuccess = successCount === totalCount;
+
+            if (allSuccess) {
+                summary.className = 'summary success';
+                summary.innerHTML = `
+                    <strong>✓ 系统正常运行！</strong><br>
+                    所有模块和依赖都已成功加载。博客应该可以正常使用。
+                `;
+            } else {
+                summary.className = 'summary error';
+                summary.innerHTML = `
+                    <strong>✗ 系统存在问题</strong><br>
+                    ${totalCount - successCount} 个检查项失败。请查看 Console 获取详细信息。
+                `;
+            }
+
+            summary.style.display = 'block';
+        }
+
+        // 运行完整诊断
+        function runDiagnostic() {
+            console.clear();
+            console.log('%c=== 系统诊断开始 ===', 'font-size: 16px; font-weight: bold; color: #2563eb;');
+
+            checks.forEach(check => {
+                const result = check.test();
+                const status = result 
+                    ? '%c✓ ' + check.name + ' - 正常' 
+                    : '%c✗ ' + check.name + ' - 异常';
+                const style = result 
+                    ? 'color: #10b981; font-weight: bold;' 
+                    : 'color: #ef4444; font-weight: bold;';
+
+                console.log(status, style);
+            });
+
+            console.log('\n%c环境信息:', 'font-size: 14px; font-weight: bold; color: #2563eb;');
+            console.log('- URL:', window.location.href);
+            console.log('- Protocol:', window.location.protocol);
+            console.log('- Hostname:', window.location.hostname);
+
+            if (typeof PathConfig !== 'undefined') {
+                console.log('\n%c路径配置:', 'font-size: 14px; font-weight: bold; color: #2563eb;');
+                console.log('- Base Path:', PathConfig.getBasePath());
+                console.log('- Posts Path:', PathConfig.getPostsPath(''));
+                console.log('- Is GitHub Pages:', PathConfig.isGitHubPages());
+            }
+
+            console.log('%c=== 诊断完成 ===', 'font-size: 16px; font-weight: bold; color: #2563eb;');
+            console.log('更多信息请在此页面查看或访问 TROUBLESHOOTING.md');
+
+            alert('诊断完成！请查看浏览器控制台获取详细信息。');
+        }
+
+        // 页面加载时运行检查
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateChecks();
+            }, 500); // 等待脚本加载
+        });
+    </script>
+</body>
+</html>

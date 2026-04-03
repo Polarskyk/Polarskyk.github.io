@@ -367,57 +367,18 @@
     <script src="js/article-loader.js"></script>
     
     <script>
-        // 路径配置管理 - 支持不同部署方式
-        const PathConfig = {
-            // 获取是否是GitHub Pages环境
-            isGitHubPages() {
-                return window.location.hostname.includes('github.io');
-            },
+        // 等待所有模块加载完毕
+        window.addEventListener('load', () => {
+            // 验证模块是否已加载
+            const requiredModules = ['PathConfig', 'MarkdownRenderer', 'MediaHandler', 'APP_CONFIG'];
+            const missingModules = requiredModules.filter(m => typeof window[m] === 'undefined');
             
-            // 获取是否是账户级仓库 (username.github.io)
-            isUserRepo() {
-                return window.location.hostname.match(/^[\w-]+\.github\.io$/) !== null;
-            },
-            
-            // 获取仓库名称
-            getRepoName() {
-                const pathname = window.location.pathname;
-                const pathParts = pathname.split('/').filter(p => p);
-                return pathParts.length > 0 ? pathParts[0] : '';
-            },
-            
-            // 获取基础路径前缀
-            getBasePath() {
-                if (!this.isGitHubPages()) {
-                    return './';
-                }
-                if (this.isUserRepo()) {
-                    return './';
-                }
-                const repoName = this.getRepoName();
-                return repoName ? `./${repoName}/` : './';
-            },
-            
-            // 获取posts文件夹路径
-            getPostsPath(filename = '') {
-                const basePath = this.getBasePath();
-                return filename ? `${basePath}posts/${filename}` : `${basePath}posts/`;
-            },
-            
-            // 获取资源路径（用于图片等）
-            getAssetPath(filepath) {
-                const basePath = this.getBasePath();
-                return filepath.startsWith('/') || filepath.startsWith('http') 
-                    ? filepath 
-                    : `${basePath}${filepath}`;
-            },
-            
-            // 获取HTML文件路径
-            getHtmlPath(filename) {
-                const basePath = this.getBasePath();
-                return `${basePath}${filename}`;
+            if (missingModules.length > 0) {
+                showError(`模块加载失败: ${missingModules.join(', ')}`);
+                console.error('缺失的模块:', missingModules);
+                return;
             }
-        };
+        });
 
         // 获取正确的首页链接
         function getHomePageUrl() {
@@ -431,15 +392,26 @@
 
         // 页面初始化
         document.addEventListener('DOMContentLoaded', () => {
-            // 更新所有返回首页的链接
-            const backButtons = document.querySelectorAll('a[href="index.html"]');
-            const homeUrl = getHomePageUrl();
-            backButtons.forEach(button => {
-                button.href = homeUrl;
-            });
+            console.log('页面初始化开始...');
             
-            // 加载文章
-            loadArticle();
+            // 验证模块加载（带超时）
+            setTimeout(() => {
+                if (typeof PathConfig === 'undefined') {
+                    showError('配置模块加载失败 (PathConfig)');
+                    console.error('PathConfig 未定义');
+                    return;
+                }
+                
+                // 更新所有返回首页的链接
+                const backButtons = document.querySelectorAll('a[href="index.html"]');
+                const homeUrl = getHomePageUrl();
+                backButtons.forEach(button => {
+                    button.href = homeUrl;
+                });
+                
+                // 加载文章
+                loadArticle();
+            }, 100);
         });
 
         async function loadArticle() {
@@ -460,6 +432,12 @@
 
             console.log('正在加载文章:', filename);
             console.log('下载链接:', downloadUrl || '使用本地路径');
+            console.log('当前环境信息:', {
+                protocol: window.location.protocol,
+                hostname: window.location.hostname,
+                pathname: window.location.pathname,
+                basePath: PathConfig ? PathConfig.getBasePath() : 'undefined'
+            });
 
             try {
                 let content = '';
@@ -576,31 +554,65 @@
                 document.getElementById('article-tags').style.display = 'none';
             }
 
-            // 配置 Markdown 渲染器（支持视频）
-            MarkdownRenderer.configure();
+            try {
+                // 配置 Markdown 渲染器（支持视频）
+                if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.configure) {
+                    MarkdownRenderer.configure();
+                    console.log('✓ Markdown 渲染器已配置');
+                } else {
+                    console.warn('⚠ Markdown 渲染器未加载，使用 marked.js 默认配置');
+                }
 
-            // 渲染 Markdown 内容（使用新的渲染器，支持视频）
-            const htmlContent = MarkdownRenderer.parse(article.content);
-            document.getElementById('article-content').innerHTML = htmlContent;
+                // 渲染 Markdown 内容（支持视频）
+                let htmlContent;
+                if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.parse) {
+                    htmlContent = MarkdownRenderer.parse(article.content);
+                    console.log('✓ 使用 MarkdownRenderer 渲染');
+                } else {
+                    // 回退到 marked
+                    htmlContent = marked.parse(article.content);
+                    console.log('✓ 使用 marked 默认渲染');
+                }
+                
+                document.getElementById('article-content').innerHTML = htmlContent;
 
-            // 获取文章内容容器
-            const contentContainer = document.getElementById('article-content');
+                // 获取文章内容容器
+                const contentContainer = document.getElementById('article-content');
 
-            // 处理图片和视频
-            MediaHandler.processImages(contentContainer);
-            MediaHandler.processVideos(contentContainer);
+                // 处理图片
+                if (typeof MediaHandler !== 'undefined' && MediaHandler.processImages) {
+                    MediaHandler.processImages(contentContainer);
+                    console.log('✓ 图片已处理');
+                } else {
+                    console.warn('⚠ 媒体处理器未加载');
+                }
 
-            // 生成目录
-            generateTOC();
+                // 处理视频
+                if (typeof MediaHandler !== 'undefined' && MediaHandler.processVideos) {
+                    MediaHandler.processVideos(contentContainer);
+                    console.log('✓ 视频已处理');
+                } else {
+                    console.warn('⚠ 视频处理失败');
+                }
 
-            // 代码高亮
-            if (typeof Prism !== 'undefined') {
-                Prism.highlightAll();
+                // 生成目录
+                generateTOC();
+
+                // 代码高亮
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                    console.log('✓ 代码已高亮');
+                }
+
+                // 显示文章，隐藏加载状态
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('article').classList.remove('hidden');
+                console.log('✓ 文章加载完成');
+                
+            } catch (error) {
+                console.error('渲染文章失败:', error);
+                showError(`渲染文章失败: ${error.message}`);
             }
-
-            // 显示文章，隐藏加载状态
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('article').classList.remove('hidden');
         }
 
         function generateTOC() {
