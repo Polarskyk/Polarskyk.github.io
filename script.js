@@ -365,34 +365,88 @@ function setupAutoRefresh() {
     }, refreshInterval);
 }
 
-// 解析Markdown文件
-function parseMarkdownFile(content, filename) {
+function normalizeFrontMatterValue(value) {
+    return String(value).replace(/^['"]|['"]$/g, '').trim();
+}
+
+function parseTagsValue(rawValue) {
+    const value = String(rawValue).trim();
+    if (!value) return [];
+    if (value.startsWith('[') && value.endsWith(']')) {
+        try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed.map(normalizeFrontMatterValue) : [];
+        } catch (error) {
+            const inner = value.slice(1, -1);
+            return inner.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+        }
+    }
+    if (value.includes(',')) {
+        return value.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+    }
+    return [normalizeFrontMatterValue(value)];
+}
+
+function parseFrontMatter(content) {
     const lines = content.split('\n');
     let frontMatterEnd = -1;
-    let frontMatter = {};
+    const frontMatter = {};
+    let currentListKey = null;
 
-    // 解析 Front Matter
-    if (lines[0] === '---') {
+    if (lines[0] && lines[0].trim() === '---') {
         for (let i = 1; i < lines.length; i++) {
-            if (lines[i] === '---') {
+            const line = lines[i];
+            if (line.trim() === '---') {
                 frontMatterEnd = i;
                 break;
             }
-            const match = lines[i].match(/^(\w+):\s*(.+)$/);
+
+            const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
             if (match) {
-                const [, key, value] = match;
-                // 处理数组格式的标签
-                if (key === 'tags' && value.startsWith('[')) {
-                    frontMatter[key] = JSON.parse(value.replace(/"/g, '"'));
-                } else {
-                    frontMatter[key] = value.replace(/['"]/g, '');
+                const [, key, rawValue] = match;
+                const value = (rawValue || '').trim();
+                if (!value) {
+                    currentListKey = key;
+                    if (!Array.isArray(frontMatter[key])) {
+                        frontMatter[key] = [];
+                    }
+                    continue;
                 }
+
+                currentListKey = null;
+                if (key === 'tags') {
+                    frontMatter[key] = parseTagsValue(value);
+                } else {
+                    frontMatter[key] = normalizeFrontMatterValue(value);
+                }
+                continue;
+            }
+
+            const listMatch = line.match(/^\s*-\s+(.+)$/);
+            if (listMatch && currentListKey) {
+                if (!Array.isArray(frontMatter[currentListKey])) {
+                    frontMatter[currentListKey] = [];
+                }
+                frontMatter[currentListKey].push(normalizeFrontMatterValue(listMatch[1]));
             }
         }
     }
 
-    // 获取文章内容（去掉 Front Matter）
-    const articleContent = lines.slice(frontMatterEnd + 1).join('\n');
+    const articleContent = frontMatterEnd >= 0
+        ? lines.slice(frontMatterEnd + 1).join('\n')
+        : content;
+
+    return {
+        frontMatter,
+        articleContent: articleContent.trim()
+    };
+}
+
+// 解析Markdown文件
+function parseMarkdownFile(content, filename) {
+    const parsed = parseFrontMatter(content);
+    const frontMatter = parsed.frontMatter;
+    const articleContent = parsed.articleContent;
     
     // 提取摘要（第一段或description）
     let description = frontMatter.description || '';
@@ -411,11 +465,15 @@ function parseMarkdownFile(content, filename) {
     const wordCount = articleContent.replace(/[^\u4e00-\u9fa5\w]/g, '').length;
     const readTime = Math.max(1, Math.ceil(wordCount / 300));
 
+    const tags = Array.isArray(frontMatter.tags)
+        ? frontMatter.tags
+        : (frontMatter.tags ? [frontMatter.tags] : []);
+
     return {
         title: frontMatter.title || '无标题',
         date: frontMatter.date || '未知日期',
         category: frontMatter.category || '未分类',
-        tags: frontMatter.tags || [],
+        tags: tags,
         description: description,
         filename: filename,
         content: articleContent,

@@ -3,6 +3,83 @@
  * 处理文章的加载、解析、缓存和刷新逻辑
  */
 
+function normalizeFrontMatterValue(value) {
+    return String(value).replace(/^['"]|['"]$/g, '').trim();
+}
+
+function parseTagsValue(rawValue) {
+    const value = String(rawValue).trim();
+    if (!value) return [];
+    if (value.startsWith('[') && value.endsWith(']')) {
+        try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed.map(normalizeFrontMatterValue) : [];
+        } catch (error) {
+            const inner = value.slice(1, -1);
+            return inner.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+        }
+    }
+    if (value.includes(',')) {
+        return value.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+    }
+    return [normalizeFrontMatterValue(value)];
+}
+
+function parseFrontMatter(content) {
+    const lines = content.split('\n');
+    let frontMatterEnd = -1;
+    const frontMatter = {};
+    let currentListKey = null;
+
+    if (lines[0] && lines[0].trim() === '---') {
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.trim() === '---') {
+                frontMatterEnd = i;
+                break;
+            }
+
+            const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+            if (match) {
+                const [, key, rawValue] = match;
+                const value = (rawValue || '').trim();
+                if (!value) {
+                    currentListKey = key;
+                    if (!Array.isArray(frontMatter[key])) {
+                        frontMatter[key] = [];
+                    }
+                    continue;
+                }
+
+                currentListKey = null;
+                if (key === 'tags') {
+                    frontMatter[key] = parseTagsValue(value);
+                } else {
+                    frontMatter[key] = normalizeFrontMatterValue(value);
+                }
+                continue;
+            }
+
+            const listMatch = line.match(/^\s*-\s+(.+)$/);
+            if (listMatch && currentListKey) {
+                if (!Array.isArray(frontMatter[currentListKey])) {
+                    frontMatter[currentListKey] = [];
+                }
+                frontMatter[currentListKey].push(normalizeFrontMatterValue(listMatch[1]));
+            }
+        }
+    }
+
+    const articleContent = frontMatterEnd >= 0
+        ? lines.slice(frontMatterEnd + 1).join('\n')
+        : content;
+
+    return {
+        frontMatter,
+        articleContent: articleContent.trim()
+    };
+}
+
 const ArticleLoader = {
     // 文章数据缓存
     cache: {
@@ -240,31 +317,9 @@ const ArticleLoader = {
      * @returns {object} 文章对象
      */
     parseMarkdownFile(content, filename) {
-        const lines = content.split('\n');
-        let frontMatterEnd = -1;
-        let frontMatter = {};
-        
-        // 解析 Front Matter
-        if (lines[0] === '---') {
-            for (let i = 1; i < lines.length; i++) {
-                if (lines[i] === '---') {
-                    frontMatterEnd = i;
-                    break;
-                }
-                const match = lines[i].match(/^(\w+):\s*(.+)$/);
-                if (match) {
-                    const [, key, value] = match;
-                    if (key === 'tags' && value.startsWith('[')) {
-                        frontMatter[key] = JSON.parse(value.replace(/"/g, '"'));
-                    } else {
-                        frontMatter[key] = value.replace(/['"]/g, '');
-                    }
-                }
-            }
-        }
-        
-        // 获取文章内容
-        const articleContent = lines.slice(frontMatterEnd + 1).join('\n');
+        const parsed = parseFrontMatter(content);
+        const frontMatter = parsed.frontMatter;
+        const articleContent = parsed.articleContent;
         
         // 提取摘要
         let description = frontMatter.description || '';
@@ -283,10 +338,14 @@ const ArticleLoader = {
         const wordCount = articleContent.replace(/[^\u4e00-\u9fa5\w]/g, '').length;
         const readTime = Math.max(1, Math.ceil(wordCount / 300));
         
+        const tags = Array.isArray(frontMatter.tags)
+            ? frontMatter.tags
+            : (frontMatter.tags ? [frontMatter.tags] : []);
+
         return {
             title: frontMatter.title || '无标题',
             date: frontMatter.date || '未知日期',
-            tags: frontMatter.tags || [],
+            tags: tags,
             description: description,
             filename: filename,
             content: articleContent,

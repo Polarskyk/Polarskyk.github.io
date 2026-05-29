@@ -531,6 +531,83 @@
             }
         }
 
+        function normalizeFrontMatterValue(value) {
+            return String(value).replace(/^['"]|['"]$/g, '').trim();
+        }
+
+        function parseTagsValue(rawValue) {
+            const value = String(rawValue).trim();
+            if (!value) return [];
+            if (value.startsWith('[') && value.endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(value);
+                    return Array.isArray(parsed) ? parsed.map(normalizeFrontMatterValue) : [];
+                } catch (error) {
+                    const inner = value.slice(1, -1);
+                    return inner.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+                }
+            }
+            if (value.includes(',')) {
+                return value.split(',').map(normalizeFrontMatterValue).filter(Boolean);
+            }
+            return [normalizeFrontMatterValue(value)];
+        }
+
+        function parseFrontMatter(content) {
+            const lines = content.split('\n');
+            let frontMatterEnd = -1;
+            const frontMatter = {};
+            let currentListKey = null;
+
+            if (lines[0] && lines[0].trim() === '---') {
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (line.trim() === '---') {
+                        frontMatterEnd = i;
+                        break;
+                    }
+
+                    const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+                    if (match) {
+                        const [, key, rawValue] = match;
+                        const value = (rawValue || '').trim();
+                        if (!value) {
+                            currentListKey = key;
+                            if (!Array.isArray(frontMatter[key])) {
+                                frontMatter[key] = [];
+                            }
+                            continue;
+                        }
+
+                        currentListKey = null;
+                        if (key === 'tags') {
+                            frontMatter[key] = parseTagsValue(value);
+                        } else {
+                            frontMatter[key] = normalizeFrontMatterValue(value);
+                        }
+                        continue;
+                    }
+
+                    const listMatch = line.match(/^\s*-\s+(.+)$/);
+                    if (listMatch && currentListKey) {
+                        if (!Array.isArray(frontMatter[currentListKey])) {
+                            frontMatter[currentListKey] = [];
+                        }
+                        frontMatter[currentListKey].push(normalizeFrontMatterValue(listMatch[1]));
+                    }
+                }
+            }
+
+            const articleContent = frontMatterEnd >= 0
+                ? lines.slice(frontMatterEnd + 1).join('\n')
+                : content;
+
+            return {
+                frontMatter,
+                articleContent: articleContent.trim()
+            };
+        }
+
         function parseMarkdownFile(content, filename) {
             // 防御性检查
             if (!content || typeof content !== 'string') {
@@ -538,43 +615,9 @@
                 throw new Error('文章内容无效');
             }
             
-            const lines = content.split('\n');
-            let frontMatterEnd = -1;
-            let frontMatter = {};
-
-            // 解析 Front Matter
-            if (lines[0] === '---') {
-                for (let i = 1; i < lines.length; i++) {
-                    if (lines[i] === '---') {
-                        frontMatterEnd = i;
-                        break;
-                    }
-                    const match = lines[i].match(/^([a-z]+):\s*(.+)$/i);
-                    if (match) {
-                        const [, key, value] = match;
-                        try {
-                            if (key === 'tags' && value.trim().startsWith('[')) {
-                                // 尝试解析为 JSON 数组
-                                frontMatter[key] = JSON.parse(value.trim());
-                            } else if (key === 'tags') {
-                                // 处理逗号分隔的标签
-                                frontMatter[key] = value.split(',').map(t => t.trim());
-                            } else {
-                                // 移除引号
-                                frontMatter[key] = value.replace(/^['"]|['"]$/g, '').trim();
-                            }
-                        } catch (error) {
-                            console.warn(`Front Matter 解析警告 (${key}):`, error);
-                            frontMatter[key] = value.replace(/^['"]|['"]$/g, '').trim();
-                        }
-                    }
-                }
-            }
-
-            // 获取文章内容（跳过 Front Matter）
-            const articleContent = frontMatterEnd >= 0 
-                ? lines.slice(frontMatterEnd + 1).join('\n').trim()
-                : content.trim();
+            const parsed = parseFrontMatter(content);
+            const frontMatter = parsed.frontMatter;
+            const articleContent = parsed.articleContent;
             
             // 防止空内容
             if (!articleContent) {
